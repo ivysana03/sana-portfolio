@@ -1,13 +1,5 @@
 import { motion } from 'framer-motion';
 
-// Import Videos
-import partyVideo from '../assets/videos/Party.mp4';
-import swissBeauty from '../assets/videos/Swiss beauty 4k.mp4';
-import superMaka from '../assets/videos/Super maka teaser.mp4';
-import mainFilm from '../assets/videos/MAIN FILM.mp4';
-import kimiricaOne from '../assets/videos/Kimirica one.mp4';
-import kimiricaSpeed from '../assets/videos/Kimirica_Precise_Speed.mp4';
-
 const projects = [
     {
         id: 1,
@@ -15,7 +7,7 @@ const projects = [
         role: 'Director & Editor',
         tools: ['Runway', 'Premiere Pro'],
         year: '2025',
-        video: partyVideo,
+        youtubeId: 'dQw4w9WgXcQ', // Replace with actual ID
     },
     {
         id: 2,
@@ -23,15 +15,15 @@ const projects = [
         role: 'Creative Director',
         tools: ['Runway', 'After Effects'],
         year: '2025',
-        video: swissBeauty,
+        youtubeId: 'dQw4w9WgXcQ', // Replace with actual ID
     },
     {
         id: 3,
-        title: 'Super Maka Teaser',
+        title: 'Super Maka',
         role: 'Director',
         tools: ['Midjourney', 'Premiere Pro'],
         year: '2024',
-        video: superMaka,
+        youtubeId: 'dQw4w9WgXcQ', // Replace with actual ID
     },
     {
         id: 4,
@@ -39,7 +31,7 @@ const projects = [
         role: 'AI Filmmaker',
         tools: ['Stable Diffusion', 'DaVinci Resolve'],
         year: '2024',
-        video: mainFilm,
+        youtubeId: 'dQw4w9WgXcQ', // Replace with actual ID
     },
     {
         id: 5,
@@ -47,15 +39,15 @@ const projects = [
         role: 'Creative Director',
         tools: ['Runway', 'Photoshop'],
         year: '2024',
-        video: kimiricaOne,
+        youtubeId: 'dQw4w9WgXcQ', // Replace with actual ID
     },
     {
         id: 6,
-        title: 'Kimirica Precise Speed',
+        title: 'Kimirica Precise',
         role: 'Visual Director',
         tools: ['After Effects', 'AI Workflow'],
         year: '2025',
-        video: kimiricaSpeed,
+        youtubeId: 'dQw4w9WgXcQ', // Replace with actual ID
     },
 ];
 
@@ -87,11 +79,13 @@ const Projects = () => {
                             }}
                         >
                             <div className="project-video-wrapper">
-                                <video
-                                    src={project.video}
+                                <iframe
+                                    src={`https://www.youtube.com/embed/${project.youtubeId}`}
+                                    title={project.title}
                                     className="project-video"
-                                    controls
-                                    preload="metadata"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
                                 />
                             </div>
 

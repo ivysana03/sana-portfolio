@@ -22,7 +22,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="hero-section">
+    <section id="home" className="hero-section">
       <div className="bg-glow"></div>
       <div className="hero-background">
         <div className="hero-gradient"></div>

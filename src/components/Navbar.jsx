@@ -3,11 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
-    { name: 'Home', href: '#' },
+    { name: 'Home', href: '#home' },
     { name: 'About', href: '#about' },
     { name: 'Showreel', href: '#showreel' },
     { name: 'Projects', href: '#projects' },
     { name: 'Services', href: '#services' },
+    { name: 'Process', href: '#process' },
     { name: 'Contact', href: '#contact' },
 ];
 
@@ -26,13 +27,17 @@ const Navbar = () => {
     return (
         <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
             <div className="container nav-container">
+
+                {/* Logo */}
                 <motion.div
                     className="nav-logo"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6 }}
                 >
-                    <a href="#">SANA<span className="highlight">SHEIKH</span></a>
+                    <a href="#home">
+                        SANA<span className="highlight">SHEIKH</span>
+                    </a>
                 </motion.div>
 
                 {/* Desktop Menu */}
@@ -52,7 +57,10 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Toggle */}
-                <div className="nav-mobile-toggle" onClick={() => setIsOpen(!isOpen)}>
+                <div
+                    className="nav-mobile-toggle"
+                    onClick={() => setIsOpen(!isOpen)}
+                >
                     {isOpen ? <X size={24} /> : <Menu size={24} />}
                 </div>
             </div>
@@ -65,6 +73,7 @@ const Navbar = () => {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
                     >
                         {navLinks.map((link) => (
                             <a
