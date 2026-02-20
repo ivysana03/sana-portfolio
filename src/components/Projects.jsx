@@ -7,7 +7,7 @@ const projects = [
         role: 'Director & Editor',
         tools: ['Runway', 'Premiere Pro'],
         year: '2025',
-        youtubeId: 'https://www.youtube.com/watch?v=bPLyEk-jUYs', // Replace with actual ID
+        youtubeId: 'bPLyEk-jUYs',
     },
     {
         id: 2,
@@ -15,7 +15,7 @@ const projects = [
         role: 'Creative Director',
         tools: ['Runway', 'After Effects'],
         year: '2025',
-        youtubeId: 'https://www.youtube.com/shorts/WfN_M5P-Ik8', // Replace with actual ID
+        youtubeId: 'WfN_M5P-Ik8',
     },
     {
         id: 3,
@@ -23,7 +23,7 @@ const projects = [
         role: 'Director',
         tools: ['Midjourney', 'Premiere Pro'],
         year: '2024',
-        youtubeId: 'https://www.youtube.com/watch?v=dcjJ9Qw8Ch4', // Replace with actual ID
+        youtubeId: 'dcjJ9Qw8Ch4',
     },
     {
         id: 4,
@@ -31,7 +31,7 @@ const projects = [
         role: 'AI Filmmaker',
         tools: ['Stable Diffusion', 'DaVinci Resolve'],
         year: '2024',
-        youtubeId: 'https://www.youtube.com/watch?v=aPwjEe9B_Sk', // Replace with actual ID
+        youtubeId: 'aPwjEe9B_Sk',
     },
     {
         id: 5,
@@ -39,7 +39,7 @@ const projects = [
         role: 'Creative Director',
         tools: ['Runway', 'Photoshop'],
         year: '2024',
-        youtubeId: 'https://www.youtube.com/shorts/C5I8jFre5Ys', // Replace with actual ID
+        youtubeId: 'C5I8jFre5Ys',
     },
     {
         id: 6,
@@ -47,7 +47,7 @@ const projects = [
         role: 'Visual Director',
         tools: ['After Effects', 'AI Workflow'],
         year: '2025',
-        youtubeId: 'https://www.youtube.com/watch?v=ljX3thxOhUU', // Replace with actual ID
+        youtubeId: 'ljX3thxOhUU',
     },
 ];
 
@@ -55,6 +55,7 @@ const Projects = () => {
     return (
         <section id="projects" className="section">
             <div className="container">
+
                 <motion.h2
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -78,9 +79,10 @@ const Projects = () => {
                                 ease: [0.16, 1, 0.3, 1],
                             }}
                         >
+                            {/* Video */}
                             <div className="project-video-wrapper">
                                 <iframe
-                                    src={`https://www.youtube.com/embed/${project.youtubeId}`}
+                                    src={`https://www.youtube-nocookie.com/embed/${project.youtubeId}`}
                                     title={project.title}
                                     className="project-video"
                                     frameBorder="0"
@@ -89,6 +91,7 @@ const Projects = () => {
                                 />
                             </div>
 
+                            {/* Info */}
                             <div className="project-info">
                                 <p className="role">{project.role}</p>
                                 <h3>{project.title}</h3>
@@ -102,6 +105,7 @@ const Projects = () => {
                                     ))}
                                 </div>
                             </div>
+
                         </motion.div>
                     ))}
                 </div>
