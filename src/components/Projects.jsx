@@ -19,11 +19,11 @@ const projects = [
     },
     {
         id: 3,
-        title: 'Super Maka',
+        title: 'Fashion Film',
         role: 'Director',
         tools: ['Midjourney', 'Premiere Pro'],
         year: '2024',
-        youtubeId: 'dQw4w9WgXcQ', // Replace with actual ID
+        youtubeId: 'https://www.youtube.com/watch?v=dcjJ9Qw8Ch4', // Replace with actual ID
     },
     {
         id: 4,
