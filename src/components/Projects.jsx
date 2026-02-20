@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 
+// 🔥 You can now paste FULL YouTube links here
 const projects = [
     {
         id: 1,
@@ -7,7 +8,7 @@ const projects = [
         role: 'Director & Editor',
         tools: ['Runway', 'Premiere Pro'],
         year: '2025',
-        youtubeId: 'bPLyEk-jUYs',
+        youtubeUrl: 'https://www.youtube.com/watch?v=bPLyEk-jUYs',
     },
     {
         id: 2,
@@ -15,7 +16,7 @@ const projects = [
         role: 'Creative Director',
         tools: ['Runway', 'After Effects'],
         year: '2025',
-        youtubeId: 'WfN_M5P-Ik8',
+        youtubeUrl: 'https://www.youtube.com/shorts/WfN_M5P-Ik8',
     },
     {
         id: 3,
@@ -23,91 +24,82 @@ const projects = [
         role: 'Director',
         tools: ['Midjourney', 'Premiere Pro'],
         year: '2024',
-        youtubeId: 'dcjJ9Qw8Ch4',
-    },
-    {
-        id: 4,
-        title: 'Main Film',
-        role: 'AI Filmmaker',
-        tools: ['Stable Diffusion', 'DaVinci Resolve'],
-        year: '2024',
-        youtubeId: 'aPwjEe9B_Sk',
-    },
-    {
-        id: 5,
-        title: 'Kimirica One',
-        role: 'Creative Director',
-        tools: ['Runway', 'Photoshop'],
-        year: '2024',
-        youtubeId: 'C5I8jFre5Ys',
-    },
-    {
-        id: 6,
-        title: 'Melting Clock',
-        role: 'Visual Director',
-        tools: ['After Effects', 'AI Workflow'],
-        year: '2025',
-        youtubeId: 'ljX3thxOhUU',
+        youtubeUrl: 'https://youtu.be/dcjJ9Qw8Ch4',
     },
 ];
 
+// 🔥 Function to extract video ID from ANY YouTube URL
+const getYoutubeId = (url) => {
+    const regExp =
+        /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([^&?/]+)/;
+    const match = url.match(regExp);
+    return match ? match[1] : null;
+};
+
 const Projects = () => {
     return (
-        <section id="projects" className="section">
-            <div className="container">
+        <section id="projects" style={{ padding: '100px 20px' }}>
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
-                <motion.h2
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
+                <h2 style={{ textAlign: 'center', marginBottom: '50px' }}>
+                    Film <span style={{ color: '#7f5af0' }}>Archive</span>
+                </h2>
+
+                <div
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                        gap: '40px',
+                    }}
                 >
-                    Film <span className="highlight">Archive</span>
-                </motion.h2>
+                    {projects.map((project, index) => {
+                        const videoId = getYoutubeId(project.youtubeUrl);
 
-                <div className="projects-grid">
-                    {projects.map((project, index) => (
-                        <motion.div
-                            key={project.id}
-                            className="project-card"
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-100px' }}
-                            transition={{
-                                delay: index * 0.1,
-                                duration: 0.8,
-                                ease: [0.16, 1, 0.3, 1],
-                            }}
-                        >
-                            {/* Video */}
-                            <div className="project-video-wrapper">
-                                <iframe
-                                    src={`https://www.youtube-nocookie.com/embed/${project.youtubeId}`}
-                                    title={project.title}
-                                    className="project-video"
-                                    frameBorder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                />
-                            </div>
+                        return (
+                            <motion.div
+                                key={project.id}
+                                initial={{ opacity: 0, y: 40 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.2 }}
+                                style={{
+                                    background: '#111',
+                                    padding: '20px',
+                                    borderRadius: '16px',
+                                }}
+                            >
+                                {videoId && (
+                                    <div
+                                        style={{
+                                            position: 'relative',
+                                            paddingTop: '56.25%',
+                                            marginBottom: '20px',
+                                        }}
+                                    >
+                                        <iframe
+                                            src={`https://www.youtube.com/embed/${videoId}`}
+                                            title={project.title}
+                                            style={{
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                width: '100%',
+                                                height: '100%',
+                                                borderRadius: '12px',
+                                            }}
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                        />
+                                    </div>
+                                )}
 
-                            {/* Info */}
-                            <div className="project-info">
-                                <p className="role">{project.role}</p>
+                                <p style={{ color: '#aaa' }}>{project.role}</p>
                                 <h3>{project.title}</h3>
-                                <p className="year">{project.year}</p>
-
-                                <div className="tags">
-                                    {project.tools.map((tool, i) => (
-                                        <span key={i} className="tag">
-                                            {tool}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-
-                        </motion.div>
-                    ))}
+                                <p style={{ color: '#666' }}>{project.year}</p>
+                            </motion.div>
+                        );
+                    })}
                 </div>
             </div>
         </section>
