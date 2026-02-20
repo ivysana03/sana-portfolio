@@ -7,7 +7,7 @@ const projects = [
         role: 'Director & Editor',
         tools: ['Runway', 'Premiere Pro'],
         year: '2025',
-        youtubeId: 'dQw4w9WgXcQ', // Replace with actual ID
+        youtubeId: 'https://www.youtube.com/watch?v=bPLyEk-jUYs', // Replace with actual ID
     },
     {
         id: 2,
@@ -15,7 +15,7 @@ const projects = [
         role: 'Creative Director',
         tools: ['Runway', 'After Effects'],
         year: '2025',
-        youtubeId: 'dQw4w9WgXcQ', // Replace with actual ID
+        youtubeId: 'https://www.youtube.com/shorts/WfN_M5P-Ik8', // Replace with actual ID
     },
     {
         id: 3,
@@ -31,7 +31,7 @@ const projects = [
         role: 'AI Filmmaker',
         tools: ['Stable Diffusion', 'DaVinci Resolve'],
         year: '2024',
-        youtubeId: 'dQw4w9WgXcQ', // Replace with actual ID
+        youtubeId: 'https://www.youtube.com/watch?v=aPwjEe9B_Sk', // Replace with actual ID
     },
     {
         id: 5,
@@ -39,15 +39,15 @@ const projects = [
         role: 'Creative Director',
         tools: ['Runway', 'Photoshop'],
         year: '2024',
-        youtubeId: 'dQw4w9WgXcQ', // Replace with actual ID
+        youtubeId: 'https://www.youtube.com/shorts/C5I8jFre5Ys', // Replace with actual ID
     },
     {
         id: 6,
-        title: 'Kimirica Precise',
+        title: 'Melting Clock',
         role: 'Visual Director',
         tools: ['After Effects', 'AI Workflow'],
         year: '2025',
-        youtubeId: 'dQw4w9WgXcQ', // Replace with actual ID
+        youtubeId: 'https://www.youtube.com/watch?v=ljX3thxOhUU', // Replace with actual ID
     },
 ];
 
