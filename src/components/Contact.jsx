@@ -13,7 +13,7 @@ const Contact = () => {
                 >
 
                     <h2 className="contact-title">
-                        START A <span className="highlight">COLLABORATE</span>
+                        LET'S WORK <span className="highlight">TOGETHER</span>
                     </h2>
 
                     <p className="contact-text">
