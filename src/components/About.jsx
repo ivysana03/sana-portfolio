@@ -38,7 +38,7 @@ const About = () => {
                         transition={{ delay: 0.2, duration: 0.8 }}
                     >
                         <p className="lead-text">
-                            I am Sana Sheikh — a multidisciplinary filmmaker working at the intersection of performance, cinematic storytelling, and generative intelligence.
+                            I am Sana Sheikh, a multidisciplinary filmmaker working at the intersection of performance, cinematic storytelling, and generative intelligence.
                         </p>
                         <p>
                             My creative philosophy is rooted in Human-Centered AI — using artificial intelligence not as a replacement for artistry, but as an expansion of creative possibility. With a foundation in acting and modeling, I bring an intuitive understanding of emotion, presence, and visual language into every frame I build.
