@@ -21,9 +21,12 @@ const Contact = () => {
                         the possibilities of AI cinema, I'm always open to new challenges.
                     </p>
 
-                    <a href="mailto:artiste.sanasheikh@gmail.com" className="contact-btn">
-                        Get In Touch
-                    </a>
+                   <a 
+  href="mailto:artiste.sanasheikh@gmail.com?subject=Let's Work Together&body=Hi Sana,%0D%0A%0D%0AI would like to discuss..."
+  className="contact-btn"
+>
+  Get In Touch
+</a>
 
                     <div className="social-links">
                         <a href="https://www.instagram.com/ivysana03?igsh=Zm40NWp5dHVwZ2li&utm_source=qr" className="social-link">Instagram</a>
