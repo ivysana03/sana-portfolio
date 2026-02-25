@@ -21,7 +21,7 @@ export default function Loader() {
             {isVisible && (
                 <motion.div
                     key="loader"
-                    className="fixed inset-0 z-[1000] flex items-center justify-center bg-bg"
+                    className="fixed inset-0 z-1000 flex items-center justify-center bg-bg"
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }} // Projector fade out
                 >

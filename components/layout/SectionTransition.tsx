@@ -11,7 +11,7 @@ export default function SectionTransition() {
     const isInView = useInView(ref, { once: true, margin: "-10% 0px -10% 0px" });
 
     return (
-        <div ref={ref} className="w-full relative h-[1px]">
+        <div ref={ref} className="w-full relative h-px">
             <motion.div
                 className="absolute top-0 left-0 bottom-0 bg-accent"
                 initial={{ width: "0%", transformOrigin: "left" }}

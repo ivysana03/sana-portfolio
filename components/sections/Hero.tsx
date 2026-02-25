@@ -13,20 +13,40 @@ export default function Hero() {
             className="relative flex min-h-screen flex-col justify-center overflow-hidden"
             style={{ padding: "0 var(--section-px)" }}
         >
-            {/* Background gradient — will be replaced with Vimeo video in Phase 2 */}
-            <div className="absolute inset-0 z-0">
+            {/* Projector Flash Sequence (happens once on load) */}
+            <motion.div
+                className="absolute inset-0 z-20 bg-text pointer-events-none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ delay: 1.5, duration: 0.08, times: [0, 0.5, 1] }}
+            />
+
+            {/* Background Video — Vimeo Embed */}
+            <motion.div
+                className="absolute inset-0 z-0 overflow-hidden bg-bg"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.4 }}
+                transition={{ delay: 1.6, duration: 2 }}
+            >
+                {/* Placeholder ID: 76979871. Sana's ID (1060377484) requires sign-in due to privacy settings. */}
+                <iframe
+                    src="https://player.vimeo.com/video/76979871?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1"
+                    allow="autoplay; fullscreen"
+                    className="absolute top-1/2 left-1/2 w-[150vw] min-w-screen min-h-screen -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                    style={{ height: '56.25vw' }} // 16:9 ratio lock
+                />
+
+                {/* Vignette overlay to ensure text legibility */}
                 <div
-                    className="absolute inset-0"
+                    className="absolute inset-0 z-10"
                     style={{
                         background: `
-              linear-gradient(180deg, transparent 50%, var(--bg) 100%),
-              radial-gradient(ellipse at 40% 40%, rgba(200,169,122,0.06) 0%, transparent 60%),
-              var(--bg)
+              linear-gradient(180deg, var(--bg) 0%, transparent 20%, transparent 80%, var(--bg) 100%),
+              radial-gradient(ellipse at center, transparent 40%, rgba(10,8,6,0.8) 100%)
             `,
                     }}
                 />
-            </div>
-
+            </motion.div>
             {/* Content */}
             <div className="relative z-10">
                 {/* Name — letter-by-letter blur reveal */}

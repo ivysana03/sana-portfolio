@@ -53,7 +53,7 @@ export default function CustomCursor() {
     return (
         <>
             <motion.div
-                className="pointer-events-none fixed top-0 left-0 z-[100] flex items-center justify-center rounded-full mix-blend-difference"
+                className="pointer-events-none fixed top-0 left-0 z-100 flex items-center justify-center rounded-full mix-blend-difference"
                 style={{
                     x: cursorX,
                     y: cursorY,
