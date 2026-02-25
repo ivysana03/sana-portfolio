@@ -61,6 +61,11 @@ export const metadata: Metadata = {
   },
 };
 
+import Nav from "@/components/layout/Nav";
+import CustomCursor from "@/components/layout/CustomCursor";
+import GrainOverlay from "@/components/layout/GrainOverlay";
+import Loader from "@/components/layout/Loader";
+
 /* ========================================
    ROOT LAYOUT
    ======================================== */
@@ -79,7 +84,13 @@ export default function RootLayout({
         ${ibmPlexMono.variable}
       `}
     >
-      <body>{children}</body>
+      <body className="antialiased overflow-x-hidden relative selection:bg-accent/30">
+        <Loader />
+        <CustomCursor />
+        <GrainOverlay />
+        <Nav />
+        {children}
+      </body>
     </html>
   );
 }
