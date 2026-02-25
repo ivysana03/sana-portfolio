@@ -198,6 +198,60 @@ p {
   border-radius: 2px;
 }
 
+/* ----- EDITORIAL FORM FIELDS ----- */
+.editorial-field {
+  position: relative;
+}
+
+.editorial-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.editorial-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-style: italic;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.editorial-input:focus {
+  border-color: var(--green);
+}
+
+.editorial-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.4;
+}
+
+.editorial-input option {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ----- KEYFRAME ANIMATIONS ----- */
+@keyframes ghostDrift {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 /* ----- RESPONSIVE ----- */
 @media (max-width: 768px) {
   :root {

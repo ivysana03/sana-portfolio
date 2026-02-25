@@ -1,0 +1,127 @@
+"use client";
+
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
+import SectionTransition from "../layout/SectionTransition";
+
+// Faint generative prompt text that sits behind the bio — barely visible
+const GHOST_PROMPTS = [
+    "cinematic wide shot, anamorphic flare, golden hour through industrial glass --ar 21:9",
+    "fashion editorial, dramatic chiaroscuro lighting, smoke and silk, 35mm film grain",
+    "slow push in on subject, shallow depth of field, Alexa Mini LF look",
+    "colour palette: deep amber, burnt sienna, desaturated teal, film emulsion texture",
+];
+
+const BIO_LINES = [
+    "I don't generate content. I direct it.",
+    "Every frame is intentional — composed with the same rigour as a physical set, but built in latent space.",
+    "My background spans traditional filmmaking, fashion photography, and visual effects. AI didn't replace my process — it accelerated it.",
+    "I work with brands, musicians, and studios who want cinematic storytelling that happens to be made with generative tools — not the other way around.",
+];
+
+export default function About() {
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const isInView = useInView(sectionRef, { once: true, margin: "-20%" });
+
+    return (
+        <section
+            id="about"
+            ref={sectionRef}
+            className="relative min-h-screen py-32"
+        >
+            <SectionTransition />
+
+            <div
+                className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center"
+                style={{ padding: "0 var(--section-px)" }}
+            >
+                {/* LEFT — Portrait */}
+                <motion.div
+                    className="relative aspect-3/4 w-full max-w-[500px] mx-auto lg:mx-0 overflow-hidden bg-bg-surface border border-border"
+                    initial={{ opacity: 0, x: -40 }}
+                    animate={isInView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                >
+                    {/* Placeholder — will be replaced with directed self-portrait */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-text-muted">
+                        <span className="font-mono text-[11px] tracking-widest uppercase opacity-40">
+                            [ DIRECTED SELF-PORTRAIT ]
+                        </span>
+                        <span className="font-mono text-[9px] tracking-wider opacity-25">
+                            Awaiting media from Sana
+                        </span>
+                    </div>
+
+                    {/* Gradient overlay to blend into the page */}
+                    <div
+                        className="absolute inset-0 z-10 pointer-events-none"
+                        style={{
+                            background:
+                                "linear-gradient(to right, transparent 80%, var(--bg) 100%)",
+                        }}
+                    />
+                </motion.div>
+
+                {/* RIGHT — Bio */}
+                <div className="relative">
+                    {/* Section Label */}
+                    <motion.span
+                        className="section-label mb-6 block"
+                        initial={{ opacity: 0 }}
+                        animate={isInView ? { opacity: 0.6 } : {}}
+                        transition={{ duration: 0.6 }}
+                    >
+                        001 / ABOUT
+                    </motion.span>
+
+                    {/* Headline */}
+                    <motion.h2
+                        className="mb-10"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={isInView ? { opacity: 1, y: 0 } : {}}
+                        transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        <span className="block text-text">Not generating.</span>
+                        <span className="block text-accent italic">Directing.</span>
+                    </motion.h2>
+
+                    {/* Bio — line-by-line scroll reveal */}
+                    <div className="space-y-6 relative">
+                        {/* Ghost prompts — faint AI prompts floating behind the text */}
+                        <div className="absolute inset-0 -z-10 overflow-hidden select-none pointer-events-none">
+                            {GHOST_PROMPTS.map((prompt, i) => (
+                                <p
+                                    key={i}
+                                    className="font-mono text-[10px] text-text/4 leading-relaxed whitespace-nowrap"
+                                    style={{
+                                        transform: `translateY(${i * 60 + 20}px) rotate(-1deg)`,
+                                        animation: `ghostDrift ${60 + i * 10}s linear infinite`,
+                                    }}
+                                >
+                                    {prompt}
+                                </p>
+                            ))}
+                        </div>
+
+                        {BIO_LINES.map((line, i) => (
+                            <motion.p
+                                key={i}
+                                className="text-[17px] max-w-[50ch]"
+                                style={{ fontStyle: "italic", color: "var(--text-muted)" }}
+                                initial={{ opacity: 0, y: 16 }}
+                                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                                transition={{
+                                    delay: 0.4 + i * 0.15,
+                                    duration: 0.7,
+                                    ease: [0.16, 1, 0.3, 1],
+                                }}
+                            >
+                                {line}
+                            </motion.p>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
