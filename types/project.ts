@@ -1,16 +1,19 @@
-/** Project type — matches Sanity schema */
+/** Project type — matches Sanity GROQ query shape */
 export interface Project {
-    _id: string;
+    _id: string;             // Internal ID (Sanity)
     title: string;
-    role: string;
-    tools: string[];
+    slug: string;            // URL-friendly slug
+    client: string;
+    role: string;            // e.g. "Director & Editor"
     year: string;
-    vimeoId: string; // short hover clip
-    vimeoIdFull: string; // full project film
-    thumbnailUrl: string;
-    brief: string; // 1 sentence: what was asked for
-    approach: string; // 1-2 sentences: the creative solution
+    categoryId: string;      // Back-reference to category document
+    categoryTitle: string;   // Hydrated category name (e.g. "Music Videos")
+    thumbnailUrl: string;    // Resolved Sanity image URL
+    vimeoId: string;         // For the hover loop
+    isFeatured: boolean;     // Featured on the main page?
+    tools?: string[];        // AI tools used (e.g. ["Runway", "Midjourney"])
+    brief?: string;
+    approach?: string;
     aiDescription?: string; // Claude-generated cinematic description
-    client?: string;
     order: number;
 }
