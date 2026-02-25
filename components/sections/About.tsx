@@ -37,7 +37,7 @@ export default function About() {
             >
                 {/* LEFT — Portrait */}
                 <motion.div
-                    className="relative aspect-3/4 w-full max-w-[500px] mx-auto lg:mx-0 overflow-hidden bg-bg-surface border border-border"
+                    className="relative aspect-3/4 w-full max-w-[500px] min-h-[70vh] mx-auto lg:mx-0 overflow-hidden bg-bg-surface border border-border"
                     initial={{ opacity: 0, x: -40 }}
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
                     transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
@@ -63,10 +63,10 @@ export default function About() {
                 </motion.div>
 
                 {/* RIGHT — Bio */}
-                <div className="relative">
+                <div className="relative lg:pr-8">
                     {/* Section Label */}
                     <motion.span
-                        className="section-label mb-6 block"
+                        className="section-label mb-8 block"
                         initial={{ opacity: 0 }}
                         animate={isInView ? { opacity: 0.6 } : {}}
                         transition={{ duration: 0.6 }}

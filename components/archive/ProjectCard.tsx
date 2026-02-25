@@ -51,7 +51,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             </div>
 
             {/* Metadata */}
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2 mt-1">
                 <div className="flex justify-between items-start">
                     <h3 className="text-[22px] leading-tight group-hover:text-accent transition-colors">
                         {project.title}
@@ -65,7 +65,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
                 {/* Tools used tags */}
                 {project.tools && project.tools.length > 0 && (
-                    <div className="flex gap-2 mt-3 flex-wrap">
+                    <div className="flex gap-2.5 mt-3 flex-wrap">
                         {project.tools.slice(0, 3).map((tool) => (
                             <span key={tool} className="text-[9px] font-mono tracking-widest text-text-muted/60 uppercase border border-border/50 px-2 py-0.5">
                                 {tool}

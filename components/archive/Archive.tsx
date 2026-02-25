@@ -22,12 +22,12 @@ export default function Archive({ initialProjects }: ArchiveProps) {
         : initialProjects.filter((p) => p.categoryTitle === activeCategory);
 
     return (
-        <section id="archive" className="relative min-h-screen pt-32 pb-32">
+        <section id="archive" className="relative min-h-screen pt-32 pb-20">
             <SectionTransition />
 
             <div className="mx-auto" style={{ padding: "0 var(--section-px)" }}>
                 {/* Header & Filters */}
-                <div className="mt-24 mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
+                <div className="mt-24 mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
                     <div>
                         <span className="section-label mb-4 block">002 / ARCHIVE</span>
                         <h2 className="text-text">Selected Works</h2>
@@ -49,7 +49,7 @@ export default function Archive({ initialProjects }: ArchiveProps) {
                 </div>
 
                 {/* Project Grid */}
-                <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+                <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
                     <AnimatePresence mode="popLayout">
                         {filteredProjects.map((project) => (
                             <ProjectCard key={project._id} project={project} />

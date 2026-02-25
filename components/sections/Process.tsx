@@ -98,7 +98,7 @@ export default function Process() {
                         {STEPS.map((step, i) => (
                             <div
                                 key={step.number}
-                                className="w-screen h-full flex items-center justify-center flex-shrink-0"
+                                className="w-screen h-full flex items-center justify-center shrink-0"
                                 style={{ padding: "0 var(--section-px)" }}
                             >
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 max-w-6xl w-full">

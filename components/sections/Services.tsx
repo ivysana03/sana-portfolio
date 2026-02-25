@@ -82,7 +82,7 @@ export default function Services() {
                             >
                                 {/* Row Header */}
                                 <button
-                                    className="w-full flex items-center justify-between py-8 cursor-pointer text-left"
+                                    className="w-full flex items-center justify-between py-10 cursor-pointer text-left"
                                     onClick={() =>
                                         setExpandedIndex(isOpen ? null : i)
                                     }
@@ -127,7 +127,7 @@ export default function Services() {
                                             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                                             className="overflow-hidden"
                                         >
-                                            <div className="pb-10 pl-16 pr-8 grid grid-cols-1 md:grid-cols-2 gap-12">
+                                            <div className="pb-10 pl-16 pr-8 grid grid-cols-1 md:grid-cols-[1fr_280px] gap-8">
                                                 <p
                                                     className="text-[15px] leading-relaxed max-w-[50ch]"
                                                     style={{

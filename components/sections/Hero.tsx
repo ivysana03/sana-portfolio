@@ -51,7 +51,7 @@ export default function Hero() {
             <div className="relative z-10">
                 {/* Name — letter-by-letter blur reveal */}
                 <h1
-                    className="mb-6"
+                    className="mb-8"
                     style={{
                         fontFamily: "var(--font-display)",
                         fontWeight: 400,
@@ -84,7 +84,7 @@ export default function Hero() {
                         fontSize: "13px",
                         textTransform: "uppercase",
                         color: "var(--text)",
-                        marginBottom: "3rem",
+                        marginBottom: "2rem",
                     }}
                 >
                     {HERO_SUBTITLE}
@@ -108,7 +108,7 @@ export default function Hero() {
 
             {/* Scroll indicator */}
             <motion.div
-                className="absolute bottom-12 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3"
+                className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 3.5, duration: 0.6 }}
