@@ -32,10 +32,10 @@ export default function Contact() {
     };
 
     return (
-        <section id="contact" ref={sectionRef} className="relative py-32">
+        <section id="contact" ref={sectionRef} className="relative">
             <SectionTransition />
 
-            <div style={{ padding: "0 var(--section-px)" }}>
+            <div>
                 {/* Two-Column Layout */}
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-16 lg:gap-24">
                     {/* LEFT — Form */}

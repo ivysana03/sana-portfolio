@@ -27,13 +27,12 @@ export default function About() {
         <section
             id="about"
             ref={sectionRef}
-            className="relative min-h-screen py-32"
+            className="relative min-h-screen"
         >
             <SectionTransition />
 
             <div
                 className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center"
-                style={{ padding: "0 var(--section-px)" }}
             >
                 {/* LEFT — Portrait */}
                 <motion.div

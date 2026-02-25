@@ -63,10 +63,34 @@
 }
 
 /* ----- BASE RESET ----- */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@layer base {
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* ----- SECTION SPACING (global baseline) ----- */
+section {
+  padding-top: clamp(4rem, 8vh, 6rem) !important;
+  padding-bottom: clamp(4rem, 8vh, 6rem) !important;
+  padding-left: var(--section-px) !important;
+  padding-right: var(--section-px) !important;
+}
+
+/* Hero is full-viewport — no vertical padding */
+section#home {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Subtle structural line between sections */
+section+section {
+  border-top: 1px solid rgba(242, 237, 228, 0.04);
 }
 
 html {
@@ -147,6 +171,8 @@ p {
   letter-spacing: 0.3em;
   color: var(--accent);
   opacity: 0.6;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
 }
 
 /* ----- TAGS / PILLS ----- */
@@ -255,6 +281,15 @@ p {
   color: var(--text);
 }
 
+/* ----- AUTOFILL FIX (prevents Chrome white box on dark bg) ----- */
+.editorial-input:-webkit-autofill,
+.editorial-input:-webkit-autofill:hover,
+.editorial-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #0A0806 inset;
+  -webkit-text-fill-color: var(--text);
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 /* ----- KEYFRAME ANIMATIONS ----- */
 @keyframes ghostDrift {
   0% {
@@ -269,7 +304,14 @@ p {
 /* ----- RESPONSIVE ----- */
 @media (max-width: 768px) {
   :root {
-    --section-px: 1.25rem;
+    --section-px: 1.5rem;
     --section-py: clamp(3rem, 8vh, 5rem);
+  }
+
+  section {
+    padding-top: clamp(3rem, 8vh, 5rem);
+    padding-bottom: clamp(3rem, 8vh, 5rem);
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }

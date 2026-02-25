@@ -48,10 +48,10 @@ export default function Services() {
     const isInView = useInView(sectionRef, { once: true, margin: "-15%" });
 
     return (
-        <section id="services" ref={sectionRef} className="relative py-32">
+        <section id="services" ref={sectionRef} className="relative">
             <SectionTransition />
 
-            <div style={{ padding: "0 var(--section-px)" }}>
+            <div>
                 {/* Section Header */}
                 <motion.div
                     className="mb-20"

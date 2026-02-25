@@ -22,12 +22,12 @@ export default function Archive({ initialProjects }: ArchiveProps) {
         : initialProjects.filter((p) => p.categoryTitle === activeCategory);
 
     return (
-        <section id="archive" className="relative min-h-screen pt-32 pb-20">
+        <section id="archive" className="relative min-h-screen">
             <SectionTransition />
 
-            <div className="mx-auto" style={{ padding: "0 var(--section-px)" }}>
+            <div className="mx-auto">
                 {/* Header & Filters */}
-                <div className="mt-24 mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
+                <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
                     <div>
                         <span className="section-label mb-4 block">002 / ARCHIVE</span>
                         <h2 className="text-text">Selected Works</h2>

@@ -11,7 +11,6 @@ export default function Hero() {
         <section
             id="home"
             className="relative flex min-h-screen flex-col justify-center overflow-hidden"
-            style={{ padding: "0 var(--section-px)" }}
         >
             {/* Projector Flash Sequence (happens once on load) */}
             <motion.div

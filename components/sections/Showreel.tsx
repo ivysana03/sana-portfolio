@@ -13,11 +13,11 @@ export default function Showreel() {
         <section
             id="showreel"
             ref={sectionRef}
-            className="relative py-32"
+            className="relative"
         >
             <SectionTransition />
 
-            <div style={{ padding: "0 var(--section-px)" }}>
+            <div>
                 {/* Oversized section title — clipped at edges like a drive-in sign */}
                 <motion.div
                     className="overflow-hidden mb-6"
