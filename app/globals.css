@@ -1,0 +1,195 @@
+@import "tailwindcss";
+
+/* ========================================
+   DESIGN SYSTEM — SANA SHEIKH PORTFOLIO
+   Unified from: Revamp Plan + Upgrade Guide
+   ======================================== */
+
+/* ----- COLOR TOKENS ----- */
+@theme {
+  --color-bg: #0A0806;
+  --color-bg-surface: #120F0B;
+  --color-text: #F2EDE4;
+  --color-text-muted: #8C7355;
+  --color-accent: #C8A97A;
+  --color-accent-green: #3D6B4F;
+  --color-border: rgba(242, 237, 228, 0.08);
+}
+
+/* ----- CSS CUSTOM PROPERTIES ----- */
+:root {
+  /* Colors */
+  --bg: #0A0806;
+  --bg-surface: #120F0B;
+  --text: #F2EDE4;
+  --text-muted: #8C7355;
+  --accent: #C8A97A;
+  --accent-green: #3D6B4F;
+  --border: rgba(242, 237, 228, 0.08);
+
+  /* Typography font families (applied via next/font in layout.tsx) */
+  --font-display: var(--font-playfair-display), serif;
+  --font-ui: var(--font-cabinet-grotesk), sans-serif;
+  --font-body: var(--font-lora), serif;
+  --font-mono: var(--font-ibm-plex-mono), monospace;
+
+  /* Spacing */
+  --section-px: clamp(1.5rem, 6vw, 7rem);
+  --section-py: clamp(5rem, 12vh, 10rem);
+
+  /* Custom cursor position (updated via JS) */
+  --cursor-x: 0px;
+  --cursor-y: 0px;
+}
+
+/* ----- BASE RESET ----- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ----- TYPOGRAPHY SCALE ----- */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: clamp(80px, 14vw, 160px);
+  font-weight: 300;
+  line-height: 0.95;
+}
+
+h2 {
+  font-size: clamp(48px, 7vw, 96px);
+  line-height: 1.05;
+}
+
+h3 {
+  font-size: clamp(28px, 3.5vw, 36px);
+  line-height: 1.2;
+}
+
+p {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--text-muted);
+  max-width: 55ch;
+  line-height: 1.75;
+  margin-bottom: 1.5rem;
+}
+
+/* ----- ACCENT CLASSES ----- */
+.text-accent {
+  color: var(--accent);
+}
+
+.text-accent-green {
+  color: var(--accent-green);
+}
+
+/* Two-tone headline signature: first line white, second line amber */
+.headline-signature span {
+  display: block;
+}
+.headline-signature .line-accent {
+  color: var(--accent);
+  font-style: italic;
+}
+
+/* ----- SECTION LABEL (001 / ABOUT) ----- */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--accent);
+  opacity: 0.6;
+}
+
+/* ----- TAGS / PILLS ----- */
+.tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+/* ----- EDITORIAL LINKS (no buttons on this site) ----- */
+.editorial-link {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--text);
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.3s ease;
+}
+
+.editorial-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.editorial-link:hover {
+  color: var(--accent);
+}
+
+.editorial-link:hover::after {
+  width: 100%;
+}
+
+/* ----- SELECTION COLOR ----- */
+::selection {
+  background: rgba(200, 169, 122, 0.3);
+  color: var(--text);
+}
+
+/* ----- SCROLLBAR ----- */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* ----- RESPONSIVE ----- */
+@media (max-width: 768px) {
+  :root {
+    --section-px: 1.25rem;
+    --section-py: clamp(3rem, 8vh, 5rem);
+  }
+}
