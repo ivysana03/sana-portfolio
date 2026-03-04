@@ -13,10 +13,9 @@ const GHOST_PROMPTS = [
 ];
 
 const BIO_LINES = [
-    "I don't generate content. I direct it.",
-    "Every frame is intentional — composed with the same rigour as a physical set, but built in latent space.",
-    "My background spans traditional filmmaking, fashion photography, and visual effects. AI didn't replace my process — it accelerated it.",
-    "I work with brands, musicians, and studios who want cinematic storytelling that happens to be made with generative tools — not the other way around.",
+    "Sana Sheikh is a multidisciplinary creative who evolved from a strong foundation in acting and modeling into building her own AI film production. With an intuitive grasp of performance, framing, emotion, and visual language, she approaches AI filmmaking not just as a toolset but as a storytelling medium.",
+    "Her work blends cinematic sensibility with advanced AI workflows, crafting high impact visuals that feel both intentional and immersive. From narrative architecture to AI-driven visual development and post-production enhancement, Sana focuses on precision, aesthetic coherence, and innovation.",
+    "She operates at the intersection of art and technology building films that are sophisticated, emotionally resonant, and technically elevated.",
 ];
 
 export default function About() {
