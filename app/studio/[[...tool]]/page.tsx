@@ -1,3 +1,5 @@
+"use client";
+
 import { NextStudio } from "next-sanity/studio";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
