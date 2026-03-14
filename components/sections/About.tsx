@@ -40,15 +40,12 @@ export default function About() {
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
                     transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
                 >
-                    {/* Placeholder — will be replaced with directed self-portrait */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-text-muted">
-                        <span className="font-mono text-[11px] tracking-widest uppercase opacity-40">
-                            [ DIRECTED SELF-PORTRAIT ]
-                        </span>
-                        <span className="font-mono text-[9px] tracking-wider opacity-25">
-                            Awaiting media from Sana
-                        </span>
-                    </div>
+                    {/* About Video */}
+                    <iframe
+                        src="https://play.gumlet.io/embed/69b4fad3c8f901eb75f2257c?autoplay=true&loop=true&muted=true&preload=auto&controls=false&info=false&logo=false"
+                        allow="autoplay; fullscreen"
+                        className="absolute top-1/2 left-1/2 w-[150%] min-h-[150%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                    />
 
                     {/* Gradient overlay to blend into the page */}
                     <div

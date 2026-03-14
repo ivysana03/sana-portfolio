@@ -1,13 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import SectionTransition from "../layout/SectionTransition";
 
 export default function Showreel() {
     const sectionRef = useRef<HTMLDivElement>(null);
     const isInView = useInView(sectionRef, { once: true, margin: "-15%" });
-    const [isPlaying, setIsPlaying] = useState(false);
 
     return (
         <section
@@ -63,39 +62,12 @@ export default function Showreel() {
                         ))}
                     </div>
 
-                    {/* Vimeo Embed */}
+                    {/* Gumlet Showreel */}
                     <iframe
-                        src="https://player.vimeo.com/video/76979871?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1"
+                        src="https://play.gumlet.io/embed/69b4fad3c8f901eb75f225a4?preload=auto&loop=true"
                         allow="autoplay; fullscreen"
-                        className="absolute inset-0 w-full h-full"
-                        style={{ border: "none" }}
+                        className="absolute inset-0 w-full h-full z-10"
                     />
-
-                    {/* Custom Play Overlay */}
-                    {!isPlaying && (
-                        <motion.div
-                            className="absolute inset-0 z-10 flex items-center justify-center bg-bg/40 backdrop-blur-sm cursor-pointer"
-                            onClick={() => setIsPlaying(true)}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.8 }}
-                        >
-                            <motion.div
-                                className="flex flex-col items-center gap-3"
-                                whileHover={{ scale: 1.05 }}
-                                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                            >
-                                <div className="w-20 h-20 rounded-full border border-text/40 flex items-center justify-center">
-                                    <span className="font-mono text-[11px] tracking-[0.3em] text-text uppercase">
-                                        Play
-                                    </span>
-                                </div>
-                                <span className="font-mono text-[9px] tracking-[0.2em] text-text-muted uppercase">
-                                    Showreel · 2:34
-                                </span>
-                            </motion.div>
-                        </motion.div>
-                    )}
                 </motion.div>
 
                 {/* Metadata row below video */}

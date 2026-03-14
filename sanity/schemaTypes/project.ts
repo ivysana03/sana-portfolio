@@ -53,11 +53,34 @@ export default defineType({
             validation: (rule) => rule.required(),
         }),
         defineField({
-            name: "vimeoId",
-            title: "Vimeo Video ID",
+            name: "videoType",
+            title: "Video Type",
             type: "string",
-            description: "Used for hover loops and the main modal player",
-            validation: (rule) => rule.required(),
+            options: {
+                list: [
+                    { title: "External (Vimeo/YouTube)", value: "external" },
+                    { title: "Direct Upload (MP4/WebM)", value: "direct" },
+                ],
+                layout: "radio",
+            },
+            initialValue: "external",
+        }),
+        defineField({
+            name: 'gumletId',
+            title: 'Gumlet Video ID',
+            type: 'string',
+            description: 'The ID of the Gumlet video (e.g., 69b4fad3bf83f6c336c678cb)',
+            hidden: ({ parent }: { parent: any }) => parent?.videoType === 'direct'
+        }),
+        defineField({
+            name: "videoFile",
+            title: "Direct Video Upload",
+            type: "file",
+            options: {
+                accept: "video/mp4,video/webm",
+            },
+            description: "Upload small looping videos directly (Max 5-10MB recommended).",
+            hidden: ({ parent }) => parent?.videoType !== "direct",
         }),
         defineField({
             name: "isFeatured",

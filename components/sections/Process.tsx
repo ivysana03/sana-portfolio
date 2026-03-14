@@ -17,35 +17,35 @@ const STEPS: Step[] = [
         title: "Concept",
         description:
             "Every film begins as a feeling. I build mood boards that mix visual references, emotional notes, and colour stories — then translate that feeling into a generative brief the AI can actually understand.",
-        visual: "[ Mood board collage ]",
+        visual: "/Concept.jpeg",
     },
     {
         number: "02",
         title: "Prompting",
         description:
             "The prompt is the script. Each word is a camera instruction, a lighting choice, a performance note. I've developed a proprietary prompting framework that produces consistent, directable results.",
-        visual: "[ Terminal prompt sequence ]",
+        visual: "/Prompting.jpeg",
     },
     {
         number: "03",
         title: "Generation",
         description:
             "Using Runway Gen-3, Midjourney, and Kling, I iterate 50–200 variations per scene — selecting, refining, and re-prompting until each frame meets the vision.",
-        visual: "[ Raw → Final comparison ]",
+        visual: "/Generating.png",
     },
     {
         number: "04",
         title: "Editing",
         description:
             "The AI gives me the raw material. In Premiere Pro and DaVinci Resolve, I compose, colour, and score — bringing human editorial judgment to AI-generated imagery.",
-        visual: "[ Colour grade comparison ]",
+        visual: "/Editing.jpeg",
     },
     {
         number: "05",
         title: "Delivery",
         description:
             "Final deliverables in 4K, colour-graded and mixed, with full rights transfer and source file packages. Typical turnaround: 7–14 days from brief to final cut.",
-        visual: "[ 4K export package ]",
+        visual: "/Delivery.jpeg",
     },
 ];
 
@@ -165,10 +165,12 @@ export default function Process() {
 
                                     {/* Right — Visual artifact placeholder */}
                                     <div className="flex items-center justify-center">
-                                        <div className="aspect-square w-full max-w-[400px] bg-bg-surface border border-border flex items-center justify-center">
-                                            <span className="font-mono text-[11px] tracking-widest text-text-muted/40 uppercase">
-                                                {step.visual}
-                                            </span>
+                                        <div className="aspect-square w-full max-w-[400px] overflow-hidden bg-bg-surface border border-border flex items-center justify-center">
+                                            <img
+                                                src={step.visual}
+                                                alt={step.title}
+                                                className="w-full h-full object-cover"
+                                            />
                                         </div>
                                     </div>
                                 </div>

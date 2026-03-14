@@ -25,9 +25,20 @@ export default function Contact() {
     const isInView = useInView(sectionRef, { once: true, margin: "-15%" });
     const [submitted, setSubmitted] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // TODO: Wire to API route / Resend / mailto
+
+        const formData = new FormData(e.currentTarget);
+        const name = formData.get("name") as string || "Unknown";
+        const projectType = formData.get("projectType") as string || "Not specified";
+        const budget = formData.get("budget") as string || "Not specified";
+        const vision = formData.get("vision") as string || "No details provided";
+
+        const subject = `New Project Inquiry: ${projectType} - ${name}`;
+        const body = `Name: ${name}\nProject Type: ${projectType}\nBudget: ${budget}\n\nVision:\n${vision}`;
+
+        window.location.href = `mailto:artiste.sanasheikh@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
         setSubmitted(true);
     };
 
@@ -61,9 +72,9 @@ export default function Contact() {
                                 ease: [0.16, 1, 0.3, 1],
                             }}
                         >
-                            Let&apos;s make
+                            Crafting stories
                             <br />
-                            <span className="text-accent italic">something beautiful.</span>
+                            <span className="text-accent italic">through AI.</span>
                         </motion.h2>
 
                         <motion.p
@@ -216,10 +227,10 @@ export default function Contact() {
                             <div>
                                 <span className="editorial-label block mb-2">Email</span>
                                 <a
-                                    href="mailto:hello@ivysana.xyz"
-                                    className="font-mono text-[13px] tracking-wider text-text hover:text-accent transition-colors"
+                                    href="mailto:artiste.sanasheikh@gmail.com"
+                                    className="font-mono text-[13px] tracking-wider text-text hover:text-accent transition-colors block break-all"
                                 >
-                                    hello@ivysana.xyz
+                                    artiste.sanasheikh@gmail.com
                                 </a>
                             </div>
 
@@ -228,10 +239,9 @@ export default function Contact() {
                                 <span className="editorial-label block mb-3">Follow</span>
                                 <div className="flex flex-col gap-3">
                                     {[
-                                        { label: "Instagram", url: "#" },
-                                        { label: "Vimeo", url: "#" },
-                                        { label: "LinkedIn", url: "#" },
-                                        { label: "X (Twitter)", url: "#" },
+                                        { label: "Instagram", url: "https://www.instagram.com/ivysana03?igsh=aXJyZGYyYWIzaGI=" },
+                                        { label: "LinkedIn", url: "https://www.linkedin.com/in/sana-sheikh-7a1b15345?utm_source=share_via&utm_content=profile&utm_medium=member_ios" },
+                                        { label: "X (Twitter)", url: "https://x.com/ivysana03?s=21" },
                                     ].map((social) => (
                                         <a
                                             key={social.label}

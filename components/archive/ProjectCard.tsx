@@ -31,23 +31,29 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                         alt={project.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-text-muted font-mono text-xs opacity-50">
-                        [ MEDIA MISSING ]
+                ) : null}
+                {/* Video Background */}
+                {(project.videoType === "direct" && project.videoUrl) || project.gumletId ? (
+                    <div className="absolute inset-0 z-10 pointer-events-none bg-bg-surface overflow-hidden group-hover:scale-105 transition-transform duration-700">
+                        {project.videoType === "direct" && project.videoUrl ? (
+                            <video
+                                src={project.videoUrl}
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                className="w-full h-full object-cover"
+                            />
+                        ) : project.gumletId ? (
+                            <iframe
+                                src={`https://play.gumlet.io/embed/${project.gumletId}?autoplay=true&loop=true&muted=true&preload=auto&controls=false&info=false&logo=false`}
+                                allow="autoplay; fullscreen"
+                                className="absolute top-1/2 left-1/2 w-[150%] min-h-[150%] -translate-x-1/2 -translate-y-1/2"
+                                style={{ pointerEvents: "none" }}
+                            />
+                        ) : null}
                     </div>
-                )}
-
-                {/* Hover Video (Vimeo loop overlay) */}
-                {project.vimeoId && (
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none bg-bg">
-                        <iframe
-                            src={`https://player.vimeo.com/video/${project.vimeoId}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1`}
-                            allow="autoplay; fullscreen"
-                            className="absolute top-1/2 left-1/2 w-[150%] min-h-[150%] -translate-x-1/2 -translate-y-1/2"
-                            style={{ pointerEvents: "none" }}
-                        />
-                    </div>
-                )}
+                ) : null}
             </div>
 
             {/* Metadata */}

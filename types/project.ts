@@ -9,7 +9,9 @@ export interface Project {
     categoryId: string;      // Back-reference to category document
     categoryTitle: string;   // Hydrated category name (e.g. "Music Videos")
     thumbnailUrl: string;    // Resolved Sanity image URL
-    vimeoId: string;         // For the hover loop
+    videoType?: "external" | "direct"; // How the video is hosted
+    gumletId?: string;       // External Gumlet ID
+    videoUrl?: string;       // Direct upload MP4 URL
     isFeatured: boolean;     // Featured on the main page?
     tools?: string[];        // AI tools used (e.g. ["Runway", "Midjourney"])
     brief?: string;

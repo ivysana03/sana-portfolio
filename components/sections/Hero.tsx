@@ -27,12 +27,10 @@ export default function Hero() {
                 animate={{ opacity: 0.4 }}
                 transition={{ delay: 1.6, duration: 2 }}
             >
-                {/* Placeholder ID: 76979871. Sana's ID (1060377484) requires sign-in due to privacy settings. */}
                 <iframe
-                    src="https://player.vimeo.com/video/76979871?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1"
+                    src="https://play.gumlet.io/embed/69b4fad3dc37184fc7936e1f?autoplay=true&loop=true&muted=true&preload=auto&controls=false&info=false&logo=false"
                     allow="autoplay; fullscreen"
-                    className="absolute top-1/2 left-1/2 w-[150vw] min-w-screen min-h-screen -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                    style={{ height: '56.25vw' }} // 16:9 ratio lock
+                    className="absolute top-1/2 left-1/2 w-[150%] min-h-[150%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
                 />
 
                 {/* Vignette overlay to ensure text legibility */}
