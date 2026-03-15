@@ -64,7 +64,7 @@ export default function Showreel() {
 
                     {/* Gumlet Showreel */}
                     <iframe
-                        src="https://play.gumlet.io/embed/69b4fad3c8f901eb75f225a4?preload=auto&loop=true"
+                        src="https://play.gumlet.io/embed/69b66344dc37184fc7ace60f?preload=auto&loop=true"
                         allow="autoplay; fullscreen"
                         className="absolute inset-0 w-full h-full z-10"
                     />

@@ -193,7 +193,7 @@ export default function Contact() {
                                         type="submit"
                                         className="editorial-link group cursor-pointer"
                                     >
-                                        Send →
+                                        → send
                                     </button>
                                 </motion.div>
                             </form>
@@ -208,21 +208,8 @@ export default function Contact() {
                         transition={{ delay: 0.6, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     >
                         <div className="flex flex-col gap-12">
-                            {/* Availability */}
-                            <div>
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="w-2 h-2 rounded-full bg-accent-green animate-pulse" />
-                                    <span className="font-mono text-[10px] tracking-[0.2em] text-accent-green uppercase">
-                                        Available
-                                    </span>
-                                </div>
-                                <p className="font-mono text-[11px] tracking-wider text-text-muted leading-relaxed">
-                                    Currently accepting projects
-                                    <br />
-                                    starting <span className="text-text">March 2026</span>
-                                </p>
-                            </div>
-
+                            {/* Removed: Availability status dot/label */}
+                            
                             {/* Email */}
                             <div>
                                 <span className="editorial-label block mb-2">Email</span>

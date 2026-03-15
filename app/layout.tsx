@@ -59,6 +59,10 @@ export const metadata: Metadata = {
     title: "Sana Sheikh — AI Filmmaker",
     description: "I direct. The machine executes.",
   },
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 import Nav from "@/components/layout/Nav";
@@ -78,6 +82,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`
         ${playfairDisplay.variable}
         ${lora.variable}

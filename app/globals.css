@@ -11,7 +11,10 @@
   --color-bg-surface: #120F0B;
   --color-text: #F2EDE4;
   --color-text-muted: #8C7355;
-  --color-accent: #C8A97A;
+  /* New Noble Gold Scale */
+  --color-accent-bright: #F1D6A7;
+  --color-accent: #E2BC7A;
+  --color-accent-muted: #A68A64;
   --color-accent-green: #3D6B4F;
   --color-border: rgba(242, 237, 228, 0.08);
 
@@ -29,7 +32,12 @@
   --bg-surface: #120F0B;
   --text: #F2EDE4;
   --text-muted: #8C7355;
-  --accent: #C8A97A;
+  
+  /* Noble Gold Palette */
+  --accent-bright: #F1D6A7;
+  --accent: #E2BC7A;
+  --accent-muted: #A68A64;
+  
   --accent-green: #3D6B4F;
   --border: rgba(242, 237, 228, 0.08);
 
@@ -169,8 +177,8 @@ p {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.3em;
-  color: var(--accent);
-  opacity: 0.6;
+  color: var(--accent-muted);
+  opacity: 0.9;
   margin-top: 0;
   margin-bottom: 1.5rem;
 }
@@ -182,7 +190,7 @@ p {
   letter-spacing: 0.15em;
   padding: 4px 12px;
   border: 1px solid var(--border);
-  color: var(--text-muted);
+  color: var(--accent-muted);
   text-transform: uppercase;
   display: inline-block;
 }
@@ -211,11 +219,12 @@ p {
 }
 
 .editorial-link:hover {
-  color: var(--accent);
+  color: var(--accent-bright);
 }
 
 .editorial-link:hover::after {
   width: 100%;
+  background: var(--accent-bright);
 }
 
 /* ----- SELECTION COLOR ----- */

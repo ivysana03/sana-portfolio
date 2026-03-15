@@ -2,11 +2,18 @@
 
 import { motion } from "framer-motion";
 import { letterVariants } from "@/lib/animations";
+import { useState, useEffect } from "react";
 
 const HERO_NAME = "SANA SHEIKH";
 const HERO_SUBTITLE = "AI FILMMAKER  ·  VISUAL STORY ARCHITECT";
 
 export default function Hero() {
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     return (
         <section
             id="home"
@@ -20,17 +27,36 @@ export default function Hero() {
                 transition={{ delay: 1.5, duration: 0.08, times: [0, 0.5, 1] }}
             />
 
-            {/* Background Video — Vimeo Embed */}
+            {/* Background Video — Gumlet Embed */}
             <motion.div
                 className="absolute inset-0 z-0 overflow-hidden bg-bg"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 0.4 }}
+                animate={{ opacity: 0.7 }}
                 transition={{ delay: 1.6, duration: 2 }}
             >
+                {/* Fallback backdrop screen (intentional dark gradient) */}
+                <div 
+                    className="absolute inset-x-0 bottom-0 h-1/2 z-5"
+                    style={{
+                        background: 'linear-gradient(to top, var(--bg) 0%, transparent 100%)'
+                    }}
+                />
+                <div 
+                    className="absolute inset-0 z-1"
+                    style={{ backgroundColor: 'rgba(10,8,6,0.6)' }} 
+                />
                 <iframe
-                    src="https://play.gumlet.io/embed/69b4fad3dc37184fc7936e1f?autoplay=true&loop=true&muted=true&preload=auto&controls=false&info=false&logo=false"
+                    src="https://play.gumlet.io/embed/69b67284dc37184fc7adef34?autoplay=true&loop=true&muted=true&preload=auto&controls=false&info=false&logo=false"
                     allow="autoplay; fullscreen"
-                    className="absolute top-1/2 left-1/2 w-[150%] min-h-[150%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                    className="absolute top-1/2 left-1/2 pointer-events-none"
+                    style={{
+                        minWidth: '100%',
+                        minHeight: '100%',
+                        width: 'max(100vw, 250vh)', // Ensure cover even on extreme mobile aspect ratios
+                        height: 'max(100vh, 56.25vw)', // 16:9 aspect ratio height
+                        transform: 'translate(-50%, -50%)',
+                        objectFit: 'cover'
+                    }}
                 />
 
                 {/* Vignette overlay to ensure text legibility */}
@@ -48,14 +74,14 @@ export default function Hero() {
             <div className="relative z-10">
                 {/* Name — letter-by-letter blur reveal */}
                 <h1
-                    className="mb-6 lg:mb-8 flex flex-wrap"
+                    className="mb-6 lg:mb-8 flex flex-col sm:flex-row sm:flex-wrap items-start"
                     style={{
                         fontFamily: "var(--font-display)",
                         fontWeight: 400,
                         lineHeight: 0.95,
-                        fontSize: "clamp(64px, 16vw, 160px)",
+                        fontSize: "clamp(60px, 15vw, 160px)",
                         letterSpacing: "-0.02em",
-                        gap: "clamp(12px, 3vw, 32px)", /* Space between names */
+                        gap: "clamp(4px, 2vw, 32px)", /* Space between names */
                     }}
                 >
                     <span className="inline-block whitespace-nowrap">
@@ -65,7 +91,7 @@ export default function Hero() {
                                 custom={i}
                                 variants={letterVariants}
                                 initial="hidden"
-                                animate="visible"
+                                animate={isMounted ? "visible" : "hidden"}
                                 style={{ display: "inline-block" }}
                             >
                                 {letter}
@@ -79,7 +105,7 @@ export default function Hero() {
                                 custom={i + 4}
                                 variants={letterVariants}
                                 initial="hidden"
-                                animate="visible"
+                                animate={isMounted ? "visible" : "hidden"}
                                 style={{ display: "inline-block" }}
                             >
                                 {letter}
@@ -91,14 +117,14 @@ export default function Hero() {
                 {/* Subtitle */}
                 <motion.p
                     initial={{ opacity: 0, letterSpacing: "0em" }}
-                    animate={{ opacity: 0.5, letterSpacing: "0.25em" }}
+                    animate={{ opacity: 0.5, letterSpacing: "0.15em" }}
                     transition={{ delay: 2.2, duration: 0.8, ease: "easeOut" }}
                     style={{
                         fontFamily: "var(--font-mono)",
-                        fontSize: "13px",
+                        fontSize: "12px",
                         textTransform: "uppercase",
-                        color: "var(--text)",
-                        marginBottom: "2rem",
+                        color: "var(--accent)",
+                        marginBottom: "1.5rem",
                     }}
                 >
                     {HERO_SUBTITLE}
@@ -106,7 +132,7 @@ export default function Hero() {
 
                 {/* CTAs — editorial text links, no buttons */}
                 <motion.div
-                    className="flex flex-col gap-4 sm:flex-row sm:gap-12"
+                    className="flex flex-col gap-5 sm:flex-row sm:gap-12"
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 2.8, duration: 0.6, ease: "easeOut" }}
@@ -115,7 +141,7 @@ export default function Hero() {
                         → watch showreel
                     </a>
                     <a href="#archive" className="editorial-link">
-                        explore work →
+                        → explore work
                     </a>
                 </motion.div>
             </div>
