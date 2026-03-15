@@ -94,7 +94,7 @@ export default function Services() {
                                         </span>
                                         {/* Service Name */}
                                         <motion.h3
-                                            className="text-[28px] md:text-[36px] transition-colors group-hover:text-accent"
+                                            className="text-[28px] md:text-[36px] transition-colors group-hover:text-accent-bright"
                                             animate={{ x: isOpen ? 8 : 0 }}
                                             transition={{ type: "spring", stiffness: 400, damping: 30 }}
                                             style={{
@@ -144,7 +144,7 @@ export default function Services() {
                                                         <span className="font-mono text-[9px] tracking-[0.2em] text-text-muted uppercase block mb-1">
                                                             Ideal For
                                                         </span>
-                                                        <span className="font-mono text-[12px] text-accent/80">
+                                                        <span className="font-mono text-[12px] text-accent">
                                                             {service.idealFor}
                                                         </span>
                                                     </div>

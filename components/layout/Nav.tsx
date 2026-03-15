@@ -59,18 +59,13 @@ export default function Nav() {
             style={{ paddingLeft: "var(--section-px)", paddingRight: "var(--section-px)" }}
         >
             <div className="flex items-center justify-between">
-                {/* Logo / Home Link */}
-                <a href="#home" className="flex items-center gap-2 group">
-                    <motion.div
-                        className="w-1.5 h-1.5 rounded-full bg-accent-green"
-                        animate={{ opacity: [1, 0.4, 1] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                {/* Logo — Premium "SS" Initials */}
+                <a href="#home" className="flex items-center group">
+                    <img 
+                        src="/logo.png" 
+                        alt="Sana Sheikh Logo" 
+                        className="h-10 md:h-12 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
                     />
-                    <span
-                        className="font-ui text-[13px] tracking-[0.2em] uppercase text-text group-hover:text-accent transition-colors"
-                    >
-                        Sana Sheikh
-                    </span>
                 </a>
 
                 {/* Desktop Nav */}
@@ -91,7 +86,7 @@ export default function Nav() {
                                 {isActive && (
                                     <motion.div
                                         layoutId="navIndicator"
-                                        className="absolute -bottom-1 left-0 right-0 h-px bg-accent"
+                                        className="absolute -bottom-1 left-0 right-0 h-px bg-accent-bright"
                                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
                                     />
                                 )}

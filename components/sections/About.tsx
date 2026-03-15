@@ -42,9 +42,17 @@ export default function About() {
                 >
                     {/* About Video */}
                     <iframe
-                        src="https://play.gumlet.io/embed/69b4fad3c8f901eb75f2257c?autoplay=true&loop=true&muted=true&preload=auto&controls=false&info=false&logo=false"
+                        src="https://play.gumlet.io/embed/69b679f7dc37184fc7ae6a85?autoplay=true&loop=true&muted=true&preload=auto&controls=false&info=false&logo=false"
                         allow="autoplay; fullscreen"
-                        className="absolute top-1/2 left-1/2 w-[150%] min-h-[150%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                        className="absolute top-1/2 left-1/2 pointer-events-none"
+                        style={{
+                            width: 'max(100%, 250vh)',
+                            height: 'max(100%, 60vw)',
+                            minWidth: '100%',
+                            minHeight: '100%',
+                            transform: 'translate(-50%, -50%)',
+                            objectFit: 'cover'
+                        }}
                     />
 
                     {/* Gradient overlay to blend into the page */}
@@ -63,7 +71,7 @@ export default function About() {
                     <motion.span
                         className="section-label mb-8 block"
                         initial={{ opacity: 0 }}
-                        animate={isInView ? { opacity: 0.6 } : {}}
+                        animate={isInView ? { opacity: 1 } : {}}
                         transition={{ duration: 0.6 }}
                     >
                         001 / ABOUT

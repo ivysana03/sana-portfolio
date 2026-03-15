@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion, useSpring } from "framer-motion";
 
 export default function CustomCursor() {
+    // State to handle hydration
+    const [isMounted, setIsMounted] = useState(false);
+
     const [isHoveringLink, setIsHoveringLink] = useState(false);
     const [isHoveringVideo, setIsHoveringVideo] = useState(false);
     const [isHoveringText, setIsHoveringText] = useState(false);
@@ -16,6 +19,7 @@ export default function CustomCursor() {
     const cursorY = useSpring(-100, { stiffness: 500, damping: 28 });
 
     useEffect(() => {
+        setIsMounted(true);
         // Only enable on non-touch devices
         if (window.matchMedia("(pointer: fine)").matches) {
             setIsTouch(false);
@@ -48,7 +52,7 @@ export default function CustomCursor() {
         };
     }, [cursorX, cursorY]);
 
-    if (isTouch) return null;
+    if (!isMounted || isTouch) return null;
 
     return (
         <>

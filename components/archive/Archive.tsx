@@ -39,7 +39,7 @@ export default function Archive({ initialProjects }: ArchiveProps) {
                             <button
                                 key={category}
                                 onClick={() => setActiveCategory(category)}
-                                className={`tag transition-colors hover:text-accent cursor-pointer ${activeCategory === category ? "text-accent border-accent/50 bg-accent/5" : ""
+                                className={`tag transition-colors hover:text-accent-bright cursor-pointer ${activeCategory === category ? "text-accent-bright border-accent-bright/50 bg-accent-bright/5" : ""
                                     }`}
                             >
                                 {category}

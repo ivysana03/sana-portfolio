@@ -59,21 +59,21 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             {/* Metadata */}
             <div className="flex flex-col gap-2 mt-1">
                 <div className="flex justify-between items-start">
-                    <h3 className="text-[22px] leading-tight group-hover:text-accent transition-colors">
+                    <h3 className="text-[22px] leading-tight group-hover:text-accent-bright transition-colors">
                         {project.title}
                     </h3>
                     <span className="font-mono text-[11px] text-text-muted mt-1">{project.year}</span>
                 </div>
 
                 <p className="font-mono text-[11px] uppercase tracking-wider text-text-muted m-0">
-                    {project.client} · <span className="text-accent/70">{project.role}</span>
+                    {project.client} · <span className="text-accent">{project.role}</span>
                 </p>
 
                 {/* Tools used tags */}
                 {project.tools && project.tools.length > 0 && (
                     <div className="flex gap-2.5 mt-3 flex-wrap">
                         {project.tools.slice(0, 3).map((tool) => (
-                            <span key={tool} className="text-[9px] font-mono tracking-widest text-text-muted/60 uppercase border border-border/50 px-2 py-0.5">
+                            <span key={tool} className="text-[9px] font-mono tracking-widest text-accent-muted uppercase border border-border/50 px-2 py-0.5">
                                 {tool}
                             </span>
                         ))}
