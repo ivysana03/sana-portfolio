@@ -48,27 +48,44 @@ export default function Hero() {
             <div className="relative z-10">
                 {/* Name — letter-by-letter blur reveal */}
                 <h1
-                    className="mb-8"
+                    className="mb-6 lg:mb-8 flex flex-wrap"
                     style={{
                         fontFamily: "var(--font-display)",
                         fontWeight: 400,
                         lineHeight: 0.95,
-                        fontSize: "clamp(80px, 14vw, 160px)",
+                        fontSize: "clamp(64px, 16vw, 160px)",
                         letterSpacing: "-0.02em",
+                        gap: "clamp(12px, 3vw, 32px)", /* Space between names */
                     }}
                 >
-                    {HERO_NAME.split("").map((letter, i) => (
-                        <motion.span
-                            key={i}
-                            custom={i}
-                            variants={letterVariants}
-                            initial="hidden"
-                            animate="visible"
-                            style={{ display: "inline-block" }}
-                        >
-                            {letter === " " ? "\u00A0" : letter}
-                        </motion.span>
-                    ))}
+                    <span className="inline-block whitespace-nowrap">
+                        {"SANA".split("").map((letter, i) => (
+                            <motion.span
+                                key={`first-${i}`}
+                                custom={i}
+                                variants={letterVariants}
+                                initial="hidden"
+                                animate="visible"
+                                style={{ display: "inline-block" }}
+                            >
+                                {letter}
+                            </motion.span>
+                        ))}
+                    </span>
+                    <span className="inline-block whitespace-nowrap">
+                        {"SHEIKH".split("").map((letter, i) => (
+                            <motion.span
+                                key={`last-${i}`}
+                                custom={i + 4}
+                                variants={letterVariants}
+                                initial="hidden"
+                                animate="visible"
+                                style={{ display: "inline-block" }}
+                            >
+                                {letter}
+                            </motion.span>
+                        ))}
+                    </span>
                 </h1>
 
                 {/* Subtitle */}
@@ -105,7 +122,7 @@ export default function Hero() {
 
             {/* Scroll indicator */}
             <motion.div
-                className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3"
+                className="absolute bottom-10 inset-x-0 z-10 flex flex-col items-center gap-3"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 3.5, duration: 0.6 }}
