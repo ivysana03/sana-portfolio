@@ -60,8 +60,8 @@ export const metadata: Metadata = {
     description: "I direct. The machine executes.",
   },
   icons: {
-    icon: "/favicon.png",
-    apple: "/favicon.png",
+    icon: "/logo.png",
+    apple: "/logo.png",
   },
 };
 
