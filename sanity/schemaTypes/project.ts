@@ -1,5 +1,9 @@
 import { defineField, defineType } from "sanity";
 
+type ProjectParent = {
+    videoType?: "external" | "direct";
+};
+
 export default defineType({
     name: "project",
     title: "Project",
@@ -70,7 +74,7 @@ export default defineType({
             title: 'Gumlet Video ID',
             type: 'string',
             description: 'The ID of the Gumlet video (e.g., 69b4fad3bf83f6c336c678cb)',
-            hidden: ({ parent }: { parent: any }) => parent?.videoType === 'direct'
+            hidden: ({ parent }: { parent: ProjectParent }) => parent?.videoType === 'direct'
         }),
         defineField({
             name: "videoFile",
