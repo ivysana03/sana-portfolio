@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import type { PortfolioFilm } from "@/lib/portfolio";
 
-export type ScreeningFilm = { title: string; src: string; poster: string; format: string; duration: string; note: string; portrait?: boolean };
+export type ScreeningFilm = PortfolioFilm;
 
 function formatTime(seconds: number) {
   if (!Number.isFinite(seconds)) return "0:00";
@@ -97,7 +99,30 @@ export default function ScreeningRoom({ films }: { films: ScreeningFilm[] }) {
   return (
     <div className={`film-installation${playing ? " is-playing" : ""}`} ref={roomRef}>
       <div className="projection-canvas">
-        <video key={activeFilm.src} ref={videoRef} className={activeFilm.portrait ? "is-portrait" : ""} src={activeFilm.src} poster={activeFilm.poster} preload="metadata" playsInline muted={muted} onClick={() => void togglePlayback()} onDoubleClick={() => void toggleFullscreen()} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)} onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)} onEnded={playNextFilm} aria-label={`${activeFilm.title} film`} />
+        <video
+          key={activeFilm.src}
+          ref={videoRef}
+          className={activeFilm.portrait ? "is-portrait" : ""}
+          src={activeFilm.src}
+          poster={activeFilm.poster}
+          preload="metadata"
+          playsInline
+          muted={muted}
+          tabIndex={0}
+          onClick={() => void togglePlayback()}
+          onDoubleClick={() => void toggleFullscreen()}
+          onKeyDown={(event) => {
+            if (event.key !== "Enter" && event.key !== " ") return;
+            event.preventDefault();
+            void togglePlayback();
+          }}
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+          onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
+          onEnded={playNextFilm}
+          aria-label={`${activeFilm.title} film — press Enter or Space to play or pause`}
+        />
         <div className="projection-texture" aria-hidden="true" />
         <div className="film-counter" aria-hidden="true">{String(activeIndex + 1).padStart(2, "0")} / {String(films.length).padStart(2, "0")}</div>
         <button className="centre-play" type="button" onClick={() => void togglePlayback()} aria-label={playing ? `Pause ${activeFilm.title}` : `Play ${activeFilm.title}`}><span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span></button>
@@ -116,7 +141,13 @@ export default function ScreeningRoom({ films }: { films: ScreeningFilm[] }) {
       </div>
 
       <div className="programme-console">
-        <div className="now-projecting" aria-live="polite"><span>Now Projecting · Continuous Reel</span><h3>{activeFilm.title}</h3><p>{activeFilm.note}</p><small>{activeFilm.format} · {activeFilm.duration}</small></div>
+        <div className="now-projecting" aria-live="polite">
+          <span>Now Projecting · Continuous Reel</span>
+          <h3>{activeFilm.title}</h3>
+          <p>{activeFilm.note}</p>
+          <small>{activeFilm.classification} · {activeFilm.role} · {activeFilm.duration}</small>
+          <Link className="project-notes-link" href={`/films/${activeFilm.slug}`}>View Project Notes <span aria-hidden="true">↗</span></Link>
+        </div>
         <div className="title-selector" aria-label="Film programme">
           {films.map((film, index) => <button className={index === activeIndex ? "is-active" : ""} type="button" key={film.src} onClick={() => selectFilm(index)} aria-pressed={index === activeIndex}><span>{String(index + 1).padStart(2, "0")}</span><strong>{film.title}</strong><small>{film.duration}</small></button>)}
         </div>

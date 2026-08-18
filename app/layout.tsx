@@ -34,6 +34,7 @@ const ibmPlexMono = IBM_Plex_Mono({
    ======================================== */
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.sanasheikh.me"),
   title: "Sana Sheikh — AI Film Director",
   description:
     "Original films, brand cinema, music videos and visual worlds directed by Sana Sheikh through an AI-native production process.",
