@@ -123,11 +123,22 @@ export const services = [
   },
 ];
 
-export const selectedCredits = [
-  { title: "Caneza", role: "Director", year: "2024" },
-  { title: "Melting Rock", role: "Director", year: "2024" },
-  { title: "Beyond Glass", role: "Director", year: "2024" },
-  { title: "Kimirica One", role: "Director", year: "2024" },
-  { title: "Swiss Beauty", role: "Director", year: "2024" },
-  { title: "Super Maka Teaser", role: "Director", year: "2024" },
+type WorkMedia =
+  | { kind: "image"; src: string; alt: string; thumbnailSrc?: string }
+  | { kind: "video"; src: string; poster: string; alt: string; thumbnailSrc?: string };
+
+type SelectedCredit = {
+  title: string;
+  role: string;
+  year: string;
+  media: WorkMedia | null;
+};
+
+export const selectedCredits: SelectedCredit[] = [
+  { title: "Caneza", role: "Director", year: "2024", media: null },
+  { title: "Melting Rock", role: "Director", year: "2024", media: null },
+  { title: "Beyond Glass", role: "Director", year: "2024", media: null },
+  { title: "Kimirica One", role: "Director", year: "2024", media: null },
+  { title: "Swiss Beauty", role: "Director", year: "2024", media: null },
+  { title: "Super Maka Teaser", role: "Director", year: "2024", media: null },
 ];

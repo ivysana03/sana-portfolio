@@ -183,7 +183,9 @@ export default function CinemaPortfolio() {
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [sent, setSent] = useState(false);
   const theatreRef = useRef<HTMLElement>(null);
+  const itemListRef = useRef<HTMLElement>(null);
   const activeSectionRef = useRef(0);
+  const activeItemRef = useRef(0);
   const wheelDeltaRef = useRef(0);
   const wheelGestureOwnerRef = useRef<"nested" | "section" | null>(null);
   const wheelSectionChangedRef = useRef(false);
@@ -209,6 +211,7 @@ export default function CinemaPortfolio() {
       animateTheatreCamera(theatreRef.current, previousProgress, nextIndex);
     }
     setActiveSectionIndex(nextIndex);
+    activeItemRef.current = 0;
     setActiveItemIndex(0);
   }, []);
 
@@ -218,11 +221,28 @@ export default function CinemaPortfolio() {
     selectSection(nextIndex);
   }, [selectSection]);
 
+  const selectActiveItem = useCallback((nextIndex: number) => {
+    activeItemRef.current = nextIndex;
+    setActiveItemIndex(nextIndex);
+
+    requestAnimationFrame(() => {
+      const list = itemListRef.current;
+      const item = list?.querySelector<HTMLElement>(`[data-item-index="${nextIndex}"]`);
+      if (!list || !item) return;
+      const listBounds = list.getBoundingClientRect();
+      const itemBounds = item.getBoundingClientRect();
+      const top = list.scrollTop + itemBounds.top - listBounds.top - (list.clientHeight - itemBounds.height) / 2;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      list.scrollTo({ top, behavior: reducedMotion ? "auto" : "smooth" });
+    });
+  }, []);
+
   const stepActiveItem = useCallback((direction: number) => {
     const count = itemCounts[activeSectionRef.current] ?? 1;
     if (count <= 1) return;
-    setActiveItemIndex((current) => (current + direction + count) % count);
-  }, []);
+    const nextIndex = (activeItemRef.current + direction + count) % count;
+    selectActiveItem(nextIndex);
+  }, [selectActiveItem]);
 
   useEffect(() => {
     const theatre = theatreRef.current;
@@ -254,16 +274,20 @@ export default function CinemaPortfolio() {
       if (nestedScrollerCanConsume(event.target, event.deltaY)) {
         wheelGestureOwnerRef.current = "nested";
         wheelDeltaRef.current = 0;
+        wheelSectionChangedRef.current = false;
+        wheelSectionDirectionRef.current = null;
         scheduleWheelReset();
         return;
+      }
+
+      if (wheelGestureOwnerRef.current === "nested") {
+        wheelGestureOwnerRef.current = null;
+        wheelDeltaRef.current = 0;
+        wheelSectionChangedRef.current = false;
+        wheelSectionDirectionRef.current = null;
       }
 
       event.preventDefault();
-      if (wheelGestureOwnerRef.current === "nested") {
-        scheduleWheelReset();
-        return;
-      }
-
       const eventDirection = Math.sign(event.deltaY) as -1 | 0 | 1;
       if (wheelSectionChangedRef.current) {
         if (eventDirection === 0 || eventDirection === wheelSectionDirectionRef.current) {
@@ -328,6 +352,11 @@ export default function CinemaPortfolio() {
     window.location.href = `mailto:artiste.sanasheikh@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     setSent(true);
   }
+
+  const activeWork = selectedCredits[activeItemIndex] ?? selectedCredits[0];
+  const setItemListElement = useCallback((node: HTMLElement | null) => {
+    itemListRef.current = node;
+  }, []);
 
   return (
     <main className="cinema-experience">
@@ -418,18 +447,52 @@ export default function CinemaPortfolio() {
 
             {activeSectionIndex === 2 ? (
               <article className="projected-panel projected-work">
-                <header><span>03 / Selected Work</span><h2>A developing body<br />of <em>directed work.</em></h2></header>
-                <div className="projected-credit-list" data-scroll-region="items-list" data-lenis-prevent>
-                  {selectedCredits.map((credit, index) => <div className={activeItemIndex === index ? "is-active" : ""} key={credit.title}><span>{String(index + 1).padStart(2, "0")}</span><strong>{credit.title}</strong><small>{credit.role} · {credit.year}</small></div>)}
+                <div className="projected-work-feature">
+                  {activeWork.media ? (
+                    <div className="projected-work-media" key={activeWork.title}>
+                      {activeWork.media.kind === "image" ? (
+                        <Image src={activeWork.media.src} alt={activeWork.media.alt} fill sizes="(max-width: 720px) 92vw, 36vw" />
+                      ) : (
+                        <video src={activeWork.media.src} poster={activeWork.media.poster} aria-label={activeWork.media.alt} autoPlay loop muted playsInline preload="metadata" />
+                      )}
+                    </div>
+                  ) : (
+                    <header className="projected-work-heading">
+                      <span className="projected-work-kicker">03 / Selected Work</span>
+                      <h2>A developing body<br />of <em>directed work.</em></h2>
+                    </header>
+                  )}
+                  <div className="projected-work-caption" aria-live="polite">
+                    <p className="projected-work-caption-label">A developing body of directed work.</p>
+                    <p className="projected-work-caption-current">Now viewing · {String(activeItemIndex + 1).padStart(2, "0")} — {activeWork.title}</p>
+                  </div>
                 </div>
+                <ol className="projected-credit-list" ref={setItemListElement} data-scroll-region="items-list" data-lenis-prevent>
+                  {selectedCredits.map((credit, index) => (
+                    <li className="projected-credit-item" key={credit.title}>
+                      <button
+                        className={`projected-credit-row${activeItemIndex === index ? " is-active" : ""}${credit.media?.thumbnailSrc ? " has-thumbnail" : ""}`}
+                        data-item-index={index}
+                        type="button"
+                        onClick={() => selectActiveItem(index)}
+                        aria-current={activeItemIndex === index ? "true" : undefined}
+                      >
+                        <span className="projected-credit-number">{String(index + 1).padStart(2, "0")}</span>
+                        {credit.media?.thumbnailSrc ? <Image className="projected-credit-thumbnail" src={credit.media.thumbnailSrc} alt="" width={80} height={45} /> : null}
+                        <strong className="projected-credit-title">{credit.title}</strong>
+                        <small className="projected-credit-meta">{credit.role} · {credit.year}</small>
+                      </button>
+                    </li>
+                  ))}
+                </ol>
               </article>
             ) : null}
 
             {activeSectionIndex === 3 ? (
               <article className="projected-panel projected-services">
                 <header><span>04 / Commission a Film</span><h2>Cinema for stories,<br />artists & <em>brands.</em></h2></header>
-                <div className="projected-service-list" data-scroll-region="items-list" data-lenis-prevent>
-                  {services.map((service, index) => <div className={activeItemIndex === index ? "is-active" : ""} key={service.number}><span>{service.number}</span><div><strong>{service.title}</strong><small>{service.summary}</small></div><em>{service.timeline.replace("Typical timeline · ", "")}</em><b aria-hidden="true">↗</b></div>)}
+                <div className="projected-service-list" ref={setItemListElement} data-scroll-region="items-list" data-lenis-prevent>
+                  {services.map((service, index) => <div className={activeItemIndex === index ? "is-active" : ""} data-item-index={index} key={service.number}><span>{service.number}</span><div><strong>{service.title}</strong><small>{service.summary}</small></div><em>{service.timeline.replace("Typical timeline · ", "")}</em><b aria-hidden="true">↗</b></div>)}
                 </div>
               </article>
             ) : null}
