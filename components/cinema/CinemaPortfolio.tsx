@@ -7,6 +7,7 @@ import { films, selectedCredits, services } from "@/lib/portfolio";
 import directorPortrait from "@/src/assets/image/sana.jpeg";
 import HeroProjection from "./HeroProjection";
 import ReelIndicator from "./ReelIndicator";
+import CinemaSoundscape from "./CinemaSoundscape";
 
 const chapters = ["Films", "Director", "Work", "Services", "Method", "Contact"] as const;
 const navigableSectionCount = 5;
@@ -25,11 +26,11 @@ type TheatrePose = {
 
 const theatreCameraStops: readonly TheatrePose[] = [
   { hallShift: 0, hallScale: 1.025, seatShift: 0, seatScale: 1, aisleScale: 1, beamScale: 1, vignetteOpacity: 0.82 },
-  { hallShift: -1.8, hallScale: 1.105, seatShift: 2.2, seatScale: 1.07, aisleScale: 1.055, beamScale: 1.025, vignetteOpacity: 0.89 },
-  { hallShift: -3.1, hallScale: 1.15, seatShift: 4, seatScale: 1.115, aisleScale: 1.095, beamScale: 1.042, vignetteOpacity: 0.94 },
-  { hallShift: -4, hallScale: 1.178, seatShift: 5.4, seatScale: 1.145, aisleScale: 1.125, beamScale: 1.055, vignetteOpacity: 0.97 },
-  { hallShift: -4.6, hallScale: 1.195, seatShift: 6.4, seatScale: 1.165, aisleScale: 1.145, beamScale: 1.063, vignetteOpacity: 0.99 },
-  { hallShift: -5, hallScale: 1.21, seatShift: 7.2, seatScale: 1.18, aisleScale: 1.16, beamScale: 1.07, vignetteOpacity: 1 },
+  { hallShift: -2.7, hallScale: 1.14, seatShift: 3.2, seatScale: 1.1, aisleScale: 1.075, beamScale: 1.035, vignetteOpacity: 0.91 },
+  { hallShift: -0.9, hallScale: 1.07, seatShift: 1.15, seatScale: 1.038, aisleScale: 1.025, beamScale: 1.012, vignetteOpacity: 0.86 },
+  { hallShift: -1.2, hallScale: 1.085, seatShift: 1.55, seatScale: 1.05, aisleScale: 1.035, beamScale: 1.017, vignetteOpacity: 0.88 },
+  { hallShift: -1.45, hallScale: 1.095, seatShift: 1.9, seatScale: 1.06, aisleScale: 1.044, beamScale: 1.02, vignetteOpacity: 0.9 },
+  { hallShift: 0.25, hallScale: 1.045, seatShift: 0.7, seatScale: 1.02, aisleScale: 1.012, beamScale: 0.985, vignetteOpacity: 0.98 },
 ];
 
 const processSteps = [
@@ -43,8 +44,8 @@ const itemLabels = ["film", "director frame", "work entry", "service", "method s
 
 const seatRows = [8, 8, 7, 6, 5, 5, 4].map((seatsPerSide, index) => {
   const scale = 0.85 ** index;
-  const brightness = Math.max(0.52, 0.92 ** index);
-  const rimLight = 0.38 * 0.67 ** index;
+  const brightness = Math.min(0.88, 0.68 + index * 0.035);
+  const rimLight = Math.min(0.3, 0.18 + index * 0.02);
   let rise = -1.5;
 
   for (let step = 0; step < index; step += 1) {
@@ -179,6 +180,7 @@ function animateTheatreCamera(theatre: HTMLElement, fromProgress: number, toProg
 export default function CinemaPortfolio() {
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
   const [activeItemIndex, setActiveItemIndex] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const [sent, setSent] = useState(false);
   const theatreRef = useRef<HTMLElement>(null);
   const activeSectionRef = useRef(0);
@@ -330,6 +332,8 @@ export default function CinemaPortfolio() {
   return (
     <main className="cinema-experience">
       <a className="skip-link" href="#theatre-screen">Skip to projected content</a>
+      <div className="cinema-global-grade" aria-hidden="true" />
+      <div className="cinema-global-grain" aria-hidden="true" />
 
       <header className="site-header">
         <button className="site-mark" type="button" onClick={() => selectSection(0)} aria-label="Sana Sheikh, return to films"><span>SS</span><small>AI Film Director</small></button>
@@ -341,6 +345,7 @@ export default function CinemaPortfolio() {
 
       <section
         className="projection-hero"
+        data-section={chapters[activeSectionIndex].toLowerCase()}
         aria-labelledby="experience-title"
         ref={theatreRef}
         style={{
@@ -388,11 +393,12 @@ export default function CinemaPortfolio() {
         }}
       >
         <Image className="hero-hall" data-camera-layer src="/cinema/archive-hall.jpeg" alt="" fill priority sizes="100vw" />
+        <div className="projector-bounce" aria-hidden="true" />
         <h1 className="sr-only" id="experience-title">Sana Sheikh — AI Film Director</h1>
 
         <div className="hero-screen" id="theatre-screen">
           <div className="screen-chapter" key={activeSectionIndex} aria-live="polite">
-            {activeSectionIndex === 0 ? <HeroProjection activeIndex={activeItemIndex} films={films} onStepItem={stepActiveItem} /> : null}
+            {activeSectionIndex === 0 ? <HeroProjection activeIndex={activeItemIndex} films={films} onStepItem={stepActiveItem} soundEnabled={soundEnabled} /> : null}
 
             {activeSectionIndex === 1 ? (
               <article className="projected-panel projected-director">
@@ -454,6 +460,7 @@ export default function CinemaPortfolio() {
             onPrevious={() => stepActiveItem(-1)}
             onNext={() => stepActiveItem(1)}
           />
+          <CinemaSoundscape enabled={soundEnabled} onEnabledChange={setSoundEnabled} sectionIndex={activeSectionIndex} />
         </div>
 
         <div className="projector-beam" data-camera-layer aria-hidden="true" />
