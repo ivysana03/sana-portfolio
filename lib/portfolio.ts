@@ -16,6 +16,20 @@ export type PortfolioFilm = {
 
 export const films: PortfolioFilm[] = [
   {
+    slug: "misty-realm",
+    title: "Misty Realm",
+    src: "/films/misty-realm.mp4",
+    poster: "/films/posters/misty-realm.jpg",
+    format: "Fantasy world",
+    duration: "00:46",
+    note: "An expansive passage built through scale, movement and impossible naturalism.",
+    classification: "Original AI film",
+    role: "AI film direction",
+    story: "A traveller enters a landscape where human scale and the natural world no longer obey familiar rules.",
+    direction: "Use scale, atmosphere and controlled camera movement to make the impossible environment feel physically inhabited.",
+    finish: "The sequence is organised as a continuous passage, holding colour and spatial rhythm across an expanding world.",
+  },
+  {
     slug: "animation-art",
     title: "Animation Art",
     src: "/films/animation-art.mp4",
@@ -29,20 +43,6 @@ export const films: PortfolioFilm[] = [
     story: "A brief portrait of memory, distance and return, told through an image that appears to be painted while it moves.",
     direction: "Keep the face emotionally legible while allowing texture, colour and motion to behave like a living canvas.",
     finish: "A compact 16-second arc shaped through restrained motion, tonal continuity and a painterly final treatment.",
-  },
-  {
-    slug: "misty-realm",
-    title: "Misty Realm",
-    src: "/films/misty-realm.mp4",
-    poster: "/films/posters/misty-realm.jpg",
-    format: "Fantasy world",
-    duration: "00:46",
-    note: "An expansive passage built through scale, movement and impossible naturalism.",
-    classification: "Original AI film",
-    role: "AI film direction",
-    story: "A traveller enters a landscape where human scale and the natural world no longer obey familiar rules.",
-    direction: "Use scale, atmosphere and controlled camera movement to make the impossible environment feel physically inhabited.",
-    finish: "The sequence is organised as a continuous passage, holding colour and spatial rhythm across an expanding world.",
   },
   {
     slug: "nightborne",

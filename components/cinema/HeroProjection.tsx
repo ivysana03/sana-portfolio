@@ -12,8 +12,8 @@ type HeroProjectionProps = {
 export default function HeroProjection({ activeIndex, films, onStepItem }: HeroProjectionProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
-  const [muted, setMuted] = useState(false);
-  const [soundBlocked, setSoundBlocked] = useState(false);
+  const mutedRef = useRef(true);
+  const [muted, setMuted] = useState(true);
   const activeFilm = films[activeIndex];
 
   useEffect(() => {
@@ -24,17 +24,15 @@ export default function HeroProjection({ activeIndex, films, onStepItem }: HeroP
     let cancelled = false;
 
     async function startProjection() {
-      currentVideo.muted = false;
-      setMuted(false);
+      currentVideo.muted = mutedRef.current;
 
       try {
         await currentVideo.play();
-        if (!cancelled) setSoundBlocked(false);
       } catch {
         if (cancelled) return;
         currentVideo.muted = true;
+        mutedRef.current = true;
         setMuted(true);
-        setSoundBlocked(true);
         await currentVideo.play().catch(() => undefined);
       }
     }
@@ -60,13 +58,14 @@ export default function HeroProjection({ activeIndex, films, onStepItem }: HeroP
     };
   }, [activeIndex]);
 
-  async function enableSound() {
+  async function toggleSound() {
     const video = videoRef.current;
     if (!video) return;
-    video.muted = false;
-    setMuted(false);
-    setSoundBlocked(false);
-    await video.play().catch(() => undefined);
+    const nextMuted = !video.muted;
+    video.muted = nextMuted;
+    mutedRef.current = nextMuted;
+    setMuted(nextMuted);
+    if (!nextMuted) await video.play().catch(() => undefined);
   }
 
   function finishSwipe(clientX: number, clientY: number) {
@@ -83,7 +82,7 @@ export default function HeroProjection({ activeIndex, films, onStepItem }: HeroP
     <div
       className="hero-reel"
       role="region"
-      aria-roledescription="carousel"
+      aria-roledescription="film reel"
       aria-label="Featured film screenings"
     >
       <video
@@ -92,6 +91,8 @@ export default function HeroProjection({ activeIndex, films, onStepItem }: HeroP
         className={activeFilm.portrait ? "hero-film is-portrait" : "hero-film"}
         src={activeFilm.src}
         poster={activeFilm.poster}
+        autoPlay
+        loop
         playsInline
         muted={muted}
         preload="auto"
@@ -103,22 +104,31 @@ export default function HeroProjection({ activeIndex, films, onStepItem }: HeroP
 
       <div className="hero-film-vignette" aria-hidden="true" />
 
-      <button className="hero-reel-arrow is-previous" type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); onStepItem(-1); }} aria-label="Play previous film"><span aria-hidden="true">←</span></button>
-      <button className="hero-reel-arrow is-next" type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); onStepItem(1); }} aria-label="Play next film"><span aria-hidden="true">→</span></button>
-
       <div className="hero-film-caption" aria-live="polite">
         <span>Now projecting · {String(activeIndex + 1).padStart(2, "0")}</span>
         <strong>{activeFilm.title}</strong>
         <small>{activeFilm.format} · {activeFilm.duration}</small>
       </div>
 
-      <div className="hero-reel-index" aria-hidden="true">
-        {films.map((film, index) => (
-          <span className={index === activeIndex ? "is-active" : ""} key={film.slug}><i /></span>
-        ))}
-      </div>
-
-      {soundBlocked ? <button className="hero-sound" type="button" onClick={() => void enableSound()}>Sound on <span aria-hidden="true">↗</span></button> : null}
+      <button
+        className={`hero-sound${muted ? " is-muted" : ""}`}
+        type="button"
+        onClick={() => void toggleSound()}
+        aria-label={muted ? "Turn sound on" : "Turn sound off"}
+        aria-pressed={muted}
+      >
+        <span className="hero-sound-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 9v6h4l5 4V5L8 9H4Z" />
+            {muted ? <path d="m17 9 5 6m0-6-5 6" /> : <path d="M17 9.5c1.3 1.2 1.3 3.8 0 5M20 7c2.7 2.7 2.7 7.3 0 10" />}
+          </svg>
+        </span>
+        <span className="hero-sound-copy">
+          <small>Projection audio</small>
+          <strong>{muted ? "Sound on" : "Sound off"}</strong>
+        </span>
+        <span className="hero-sound-lamp" aria-hidden="true" />
+      </button>
     </div>
   );
 }
