@@ -6,14 +6,51 @@ type CinemaSoundscapeProps = {
   enabled: boolean;
   onEnabledChange: (enabled: boolean) => void;
   sectionIndex: number;
+  closingCreditsOpen: boolean;
 };
 
 type SoundGraph = {
   context: AudioContext;
   master: GainNode;
+  closingPiano: GainNode;
 };
 
-export default function CinemaSoundscape({ enabled, onEnabledChange, sectionIndex }: CinemaSoundscapeProps) {
+const closingPianoNotes = [220, 261.63, 329.63, 392, 293.66, 349.23, 440, 523.25];
+
+function scheduleClosingPianoPhrase(graph: SoundGraph) {
+  const { context, closingPiano } = graph;
+  const phraseStart = context.currentTime + 0.04;
+
+  closingPianoNotes.forEach((frequency, index) => {
+    const start = phraseStart + index * 0.58;
+    const end = start + 3.4;
+    const fundamental = context.createOscillator();
+    const overtone = context.createOscillator();
+    const toneFilter = context.createBiquadFilter();
+    const noteGain = context.createGain();
+
+    fundamental.type = "sine";
+    fundamental.frequency.setValueAtTime(frequency, start);
+    overtone.type = "triangle";
+    overtone.frequency.setValueAtTime(frequency * 2, start);
+    toneFilter.type = "lowpass";
+    toneFilter.frequency.setValueAtTime(2100, start);
+    toneFilter.frequency.exponentialRampToValueAtTime(620, end);
+    noteGain.gain.setValueAtTime(0.0001, start);
+    noteGain.gain.exponentialRampToValueAtTime(index % 4 === 0 ? 0.055 : 0.034, start + 0.035);
+    noteGain.gain.exponentialRampToValueAtTime(0.0001, end);
+
+    fundamental.connect(toneFilter);
+    overtone.connect(toneFilter);
+    toneFilter.connect(noteGain).connect(closingPiano);
+    fundamental.start(start);
+    overtone.start(start);
+    fundamental.stop(end);
+    overtone.stop(end);
+  });
+}
+
+export default function CinemaSoundscape({ enabled, onEnabledChange, sectionIndex, closingCreditsOpen }: CinemaSoundscapeProps) {
   const graphRef = useRef<SoundGraph | null>(null);
   const previousSectionRef = useRef(sectionIndex);
 
@@ -22,7 +59,10 @@ export default function CinemaSoundscape({ enabled, onEnabledChange, sectionInde
 
     const context = new AudioContext();
     const master = context.createGain();
+    const closingPiano = context.createGain();
     master.gain.value = 0.72;
+    closingPiano.gain.value = 0.0001;
+    closingPiano.connect(master);
     master.connect(context.destination);
 
     const noiseBuffer = context.createBuffer(1, context.sampleRate * 2, context.sampleRate);
@@ -54,7 +94,7 @@ export default function CinemaSoundscape({ enabled, onEnabledChange, sectionInde
     roomHum.connect(humGain).connect(master);
     roomHum.start();
 
-    graphRef.current = { context, master };
+    graphRef.current = { context, master, closingPiano };
     return graphRef.current;
   }
 
@@ -88,6 +128,32 @@ export default function CinemaSoundscape({ enabled, onEnabledChange, sectionInde
     reelClick.start(now);
     reelClick.stop(now + 0.15);
   }, [enabled, sectionIndex]);
+
+  useEffect(() => {
+    const graph = graphRef.current;
+    if (!graph || !enabled || graph.context.state !== "running") return;
+
+    const now = graph.context.currentTime;
+    graph.closingPiano.gain.cancelScheduledValues(now);
+    graph.closingPiano.gain.setValueAtTime(Math.max(0.0001, graph.closingPiano.gain.value), now);
+
+    if (!closingCreditsOpen) {
+      graph.closingPiano.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+      return;
+    }
+
+    graph.closingPiano.gain.exponentialRampToValueAtTime(0.18, now + 2.4);
+    scheduleClosingPianoPhrase(graph);
+    const phraseTimer = window.setInterval(() => scheduleClosingPianoPhrase(graph), 5200);
+
+    return () => {
+      window.clearInterval(phraseTimer);
+      const fadeStart = graph.context.currentTime;
+      graph.closingPiano.gain.cancelScheduledValues(fadeStart);
+      graph.closingPiano.gain.setValueAtTime(Math.max(0.0001, graph.closingPiano.gain.value), fadeStart);
+      graph.closingPiano.gain.exponentialRampToValueAtTime(0.0001, fadeStart + 0.8);
+    };
+  }, [closingCreditsOpen, enabled]);
 
   useEffect(() => () => {
     const graph = graphRef.current;

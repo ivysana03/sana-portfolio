@@ -8,9 +8,10 @@ type HeroProjectionProps = {
   films: PortfolioFilm[];
   onStepItem: (direction: number) => void;
   soundEnabled: boolean;
+  onSoundEnabledChange: (enabled: boolean) => void;
 };
 
-export default function HeroProjection({ activeIndex, films, onStepItem, soundEnabled }: HeroProjectionProps) {
+export default function HeroProjection({ activeIndex, films, onStepItem, soundEnabled, onSoundEnabledChange }: HeroProjectionProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
   const activeFilm = films[activeIndex];
@@ -91,10 +92,29 @@ export default function HeroProjection({ activeIndex, films, onStepItem, soundEn
 
       <div className="hero-film-vignette" aria-hidden="true" />
 
-      <div className="hero-film-caption" aria-live="polite">
-        <span>Now projecting · {String(activeIndex + 1).padStart(2, "0")}</span>
-        <strong>{activeFilm.title}</strong>
-        <small>{activeFilm.format} · {activeFilm.duration}</small>
+      <div className="hero-film-controls" aria-live="polite">
+        <div className="hero-film-caption">
+          <span>Now playing — <strong>{activeFilm.title}</strong></span>
+          <small>{String(activeIndex + 1).padStart(2, "0")} / {String(films.length).padStart(2, "0")} · {activeFilm.duration}</small>
+        </div>
+        <div className="hero-film-actions">
+          <button
+            className="hero-film-sound"
+            type="button"
+            onClick={() => onSoundEnabledChange(!soundEnabled)}
+            aria-label={soundEnabled ? "Mute film" : "Unmute film"}
+            aria-pressed={soundEnabled}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 9v6h4l5 4V5L8 9H4Z" />
+              {soundEnabled ? <path d="M16 8.5c1.5 1.8 1.5 5.2 0 7M18.5 6c3 3.3 3 8.7 0 12" /> : <path d="m17 9 5 6m0-6-5 6" />}
+            </svg>
+            <span>{soundEnabled ? "Sound on" : "Sound off"}</span>
+          </button>
+          <button className="hero-film-explore" type="button" onClick={() => onStepItem(1)} aria-label="Explore next film">
+            Explore films <span aria-hidden="true">→</span>
+          </button>
+        </div>
       </div>
 
     </div>

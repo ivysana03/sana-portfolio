@@ -6,8 +6,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { films, selectedCredits, services } from "@/lib/portfolio";
 import directorPortrait from "@/src/assets/image/sana.jpeg";
 import HeroProjection from "./HeroProjection";
-import ReelIndicator from "./ReelIndicator";
-import CinemaSoundscape from "./CinemaSoundscape";
 
 const chapters = ["Films", "Director", "Work", "Services", "Method", "Contact"] as const;
 const navigableSectionCount = 5;
@@ -40,7 +38,6 @@ const processSteps = [
   { number: "04", title: "Edit & Finish", detail: "Rhythm · Sound · Grade", copy: "Shape picture, sound and colour into the final emotional rhythm." },
 ];
 const itemCounts = [films.length, 1, selectedCredits.length, services.length, processSteps.length, 1];
-const itemLabels = ["film", "director frame", "work entry", "service", "method step", "contact frame"] as const;
 
 const seatRows = [8, 8, 7, 6, 5, 5, 4].map((seatsPerSide, index) => {
   const scale = 0.85 ** index;
@@ -180,12 +177,14 @@ function animateTheatreCamera(theatre: HTMLElement, fromProgress: number, toProg
 export default function CinemaPortfolio() {
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
   const [activeItemIndex, setActiveItemIndex] = useState(0);
+  const [closingCreditsOpen, setClosingCreditsOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [sent, setSent] = useState(false);
   const theatreRef = useRef<HTMLElement>(null);
   const itemListRef = useRef<HTMLElement>(null);
   const activeSectionRef = useRef(0);
   const activeItemRef = useRef(0);
+  const closingCreditsRef = useRef(false);
   const wheelDeltaRef = useRef(0);
   const wheelGestureOwnerRef = useRef<"nested" | "section" | null>(null);
   const wheelSectionChangedRef = useRef(false);
@@ -201,7 +200,14 @@ export default function CinemaPortfolio() {
 
   const selectSection = useCallback((index: number) => {
     const nextIndex = Math.max(0, Math.min(chapters.length - 1, index));
-    if (nextIndex === activeSectionRef.current) return;
+    const sectionChanged = nextIndex !== activeSectionRef.current;
+
+    if (closingCreditsRef.current) {
+      closingCreditsRef.current = false;
+      setClosingCreditsOpen(false);
+    }
+    if (!sectionChanged) return;
+
     const previousProgress = cameraProgressRef.current;
     const direction = Math.sign(nextIndex - activeSectionRef.current) || 1;
     activeSectionRef.current = nextIndex;
@@ -213,12 +219,38 @@ export default function CinemaPortfolio() {
     setActiveSectionIndex(nextIndex);
     activeItemRef.current = 0;
     setActiveItemIndex(0);
+
+    const focusedControl = document.activeElement;
+    if (
+      focusedControl instanceof HTMLElement
+      && focusedControl.closest(".site-header")
+      && focusedControl.dataset.sectionIndex !== String(nextIndex)
+    ) {
+      focusedControl.blur();
+    }
   }, []);
 
   const stepSection = useCallback((direction: number) => {
+    if (closingCreditsRef.current) {
+      if (direction >= 0) return false;
+      closingCreditsRef.current = false;
+      setClosingCreditsOpen(false);
+      return true;
+    }
+
     const current = activeSectionRef.current;
+    if (direction > 0 && current === finalSectionIndex) {
+      closingCreditsRef.current = true;
+      setClosingCreditsOpen(true);
+      const focusedControl = document.activeElement;
+      if (focusedControl instanceof HTMLElement && focusedControl.closest(".site-header")) focusedControl.blur();
+      return true;
+    }
+
     const nextIndex = Math.max(0, Math.min(finalSectionIndex, current + direction));
+    if (nextIndex === current) return false;
     selectSection(nextIndex);
+    return true;
   }, [selectSection]);
 
   const selectActiveItem = useCallback((nextIndex: number) => {
@@ -307,9 +339,9 @@ export default function CinemaPortfolio() {
       wheelDeltaRef.current += event.deltaY;
       if (Math.abs(wheelDeltaRef.current) >= wheelThreshold) {
         const sectionDirection = wheelDeltaRef.current > 0 ? 1 : -1;
-        wheelSectionChangedRef.current = true;
-        wheelSectionDirectionRef.current = sectionDirection;
-        stepSection(sectionDirection);
+        const sectionChanged = stepSection(sectionDirection);
+        wheelSectionChangedRef.current = sectionChanged;
+        wheelSectionDirectionRef.current = sectionChanged ? sectionDirection : null;
         wheelDeltaRef.current = 0;
       } else {
         previewCameraProgress(activeSectionRef.current + wheelDeltaRef.current / wheelThreshold);
@@ -365,11 +397,30 @@ export default function CinemaPortfolio() {
       <div className="cinema-global-grain" aria-hidden="true" />
 
       <header className="site-header">
-        <button className="site-mark" type="button" onClick={() => selectSection(0)} aria-label="Sana Sheikh, return to films"><span>SS</span><small>AI Film Director</small></button>
+        <button className="site-mark" data-section-index="0" type="button" onClick={() => selectSection(0)} aria-label="Sana Sheikh, return to films"><span>SS</span><small>AI Film Director</small></button>
         <nav aria-label="Projected chapters">
-          {chapters.slice(0, navigableSectionCount).map((name, index) => <button className={activeSectionIndex === index ? "is-active" : ""} type="button" key={name} onClick={() => selectSection(index)}>{name}</button>)}
+          {chapters.slice(0, navigableSectionCount).map((name, index) => (
+            <button
+              className={activeSectionIndex === index && !closingCreditsOpen ? "is-active" : ""}
+              data-section-index={index}
+              type="button"
+              key={name}
+              onClick={() => selectSection(index)}
+              aria-current={activeSectionIndex === index && !closingCreditsOpen ? "page" : undefined}
+            >
+              {name}
+            </button>
+          ))}
         </nav>
-        <button className="header-contact" type="button" onClick={() => selectSection(5)}>Start a Film <span aria-hidden="true">↗</span></button>
+        <button
+          className={`header-contact${activeSectionIndex === finalSectionIndex ? " is-active" : ""}`}
+          data-section-index={finalSectionIndex}
+          type="button"
+          onClick={() => selectSection(finalSectionIndex)}
+          aria-current={activeSectionIndex === finalSectionIndex ? "page" : undefined}
+        >
+          {closingCreditsOpen ? "Credits" : "Start a Film"} <span aria-hidden="true">↗</span>
+        </button>
       </header>
 
       <section
@@ -422,12 +473,13 @@ export default function CinemaPortfolio() {
         }}
       >
         <Image className="hero-hall" data-camera-layer src="/cinema/archive-hall.jpeg" alt="" fill priority sizes="100vw" />
+        <div className="cinema-entrance-lights" aria-hidden="true" />
         <div className="projector-bounce" aria-hidden="true" />
         <h1 className="sr-only" id="experience-title">Sana Sheikh — AI Film Director</h1>
 
         <div className="hero-screen" id="theatre-screen">
           <div className="screen-chapter" key={activeSectionIndex} aria-live="polite">
-            {activeSectionIndex === 0 ? <HeroProjection activeIndex={activeItemIndex} films={films} onStepItem={stepActiveItem} soundEnabled={soundEnabled} /> : null}
+            {activeSectionIndex === 0 ? <HeroProjection activeIndex={activeItemIndex} films={films} onStepItem={stepActiveItem} soundEnabled={soundEnabled} onSoundEnabledChange={setSoundEnabled} /> : null}
 
             {activeSectionIndex === 1 ? (
               <article className="projected-panel projected-director">
@@ -499,9 +551,23 @@ export default function CinemaPortfolio() {
 
             {activeSectionIndex === 4 ? (
               <article className="projected-panel projected-method">
-                <header><span>05 / AI-native Production</span><h2>A director’s process.<br /><em>A new kind of set.</em></h2></header>
-                <div className="projected-process-list" data-scroll-region="items-list" data-lenis-prevent>
-                  {processSteps.map((step, index) => <div className={activeItemIndex === index ? "is-active" : ""} key={step.number}><span>{step.number}</span><small>{step.detail}</small><strong>{step.title}</strong><p>{step.copy}</p></div>)}
+                <header className="projected-method-copy" key={processSteps[activeItemIndex]?.number}>
+                  <span>05 / AI-native Production · {processSteps[activeItemIndex]?.number}</span>
+                  <h2>{processSteps[activeItemIndex]?.title}.<br /><em>{processSteps[activeItemIndex]?.detail}.</em></h2>
+                  <p>{processSteps[activeItemIndex]?.copy}</p>
+                </header>
+                <div className="projected-process-list" aria-label="AI-native production method">
+                  {processSteps.map((step, index) => (
+                    <button
+                      className={activeItemIndex === index ? "is-active" : ""}
+                      type="button"
+                      key={step.number}
+                      onClick={() => selectActiveItem(index)}
+                      aria-current={activeItemIndex === index ? "step" : undefined}
+                    >
+                      <span>{step.number}</span><small>{step.detail}</small><strong>{step.title}</strong><p>{step.copy}</p>
+                    </button>
+                  ))}
                 </div>
               </article>
             ) : null}
@@ -515,15 +581,18 @@ export default function CinemaPortfolio() {
             ) : null}
           </div>
 
-          <ReelIndicator
-            activeIndex={activeItemIndex}
-            itemCount={itemCounts[activeSectionIndex] ?? 1}
-            itemLabel={itemLabels[activeSectionIndex] ?? "frame"}
-            sectionName={chapters[activeSectionIndex]}
-            onPrevious={() => stepActiveItem(-1)}
-            onNext={() => stepActiveItem(1)}
-          />
-          <CinemaSoundscape enabled={soundEnabled} onEnabledChange={setSoundEnabled} sectionIndex={activeSectionIndex} />
+          {closingCreditsOpen ? (
+            <div className="closing-credits" role="status" aria-label="Closing credits">
+              <div className="closing-credits-roll">
+                <small>A film experience by</small>
+                <h2>Sana Sheikh</h2>
+                <p>Direction · Performance · Visual Development · Post</p>
+                <span>Original films and visual worlds<br />directed through an AI-native production process.</span>
+                <strong>End of programme</strong>
+                <em>Scroll up to return</em>
+              </div>
+            </div>
+          ) : null}
         </div>
 
         <div className="projector-beam" data-camera-layer aria-hidden="true" />

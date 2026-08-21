@@ -30,7 +30,9 @@ export default function ReelIndicator({
         }}
         aria-label={`Previous ${itemLabel}`}
       >
-        <span className="reel-frame-icon" aria-hidden="true"><i /><i /></span>
+        <svg className="reel-arrow-icon" viewBox="0 0 28 16" aria-hidden="true">
+          <path d="M27 8H2M8 1 1 8l7 7" />
+        </svg>
       </button>
 
       <div className={`reel-film-strip${isSingleFrame ? " is-single-frame" : ""}`}>
@@ -56,7 +58,9 @@ export default function ReelIndicator({
         }}
         aria-label={`Next ${itemLabel}`}
       >
-        <span className="reel-frame-icon" aria-hidden="true"><i /><i /></span>
+        <svg className="reel-arrow-icon" viewBox="0 0 28 16" aria-hidden="true">
+          <path d="M1 8h25M20 1l7 7-7 7" />
+        </svg>
       </button>
     </div>
   );
