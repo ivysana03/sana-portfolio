@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { films, selectedCredits, services } from "@/lib/portfolio";
 import directorPortrait from "@/src/assets/image/sana.jpeg";
+import CinemaSoundscape from "./CinemaSoundscape";
 import HeroProjection from "./HeroProjection";
 
 const chapters = ["Films", "Director", "Work", "Services", "Method", "Contact"] as const;
@@ -555,6 +556,10 @@ export default function CinemaPortfolio() {
                   <span>05 / AI-native Production · {processSteps[activeItemIndex]?.number}</span>
                   <h2>{processSteps[activeItemIndex]?.title}.<br /><em>{processSteps[activeItemIndex]?.detail}.</em></h2>
                   <p>{processSteps[activeItemIndex]?.copy}</p>
+                  <div className="projected-method-navigation" aria-label="Browse method steps">
+                    <button type="button" onClick={() => stepActiveItem(-1)} aria-label="Previous method step">←</button>
+                    <button type="button" onClick={() => stepActiveItem(1)} aria-label="Next method step">→</button>
+                  </div>
                 </header>
                 <div className="projected-process-list" aria-label="AI-native production method">
                   {processSteps.map((step, index) => (
@@ -580,6 +585,14 @@ export default function CinemaPortfolio() {
               </article>
             ) : null}
           </div>
+
+          <CinemaSoundscape
+            enabled={soundEnabled}
+            onEnabledChange={setSoundEnabled}
+            sectionIndex={activeSectionIndex}
+            closingCreditsOpen={closingCreditsOpen}
+            showControl={false}
+          />
 
           {closingCreditsOpen ? (
             <div className="closing-credits" role="status" aria-label="Closing credits">

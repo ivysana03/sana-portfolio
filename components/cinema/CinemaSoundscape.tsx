@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 type CinemaSoundscapeProps = {
   enabled: boolean;
   onEnabledChange: (enabled: boolean) => void;
   sectionIndex: number;
   closingCreditsOpen: boolean;
+  showControl?: boolean;
 };
 
 type SoundGraph = {
@@ -50,11 +51,11 @@ function scheduleClosingPianoPhrase(graph: SoundGraph) {
   });
 }
 
-export default function CinemaSoundscape({ enabled, onEnabledChange, sectionIndex, closingCreditsOpen }: CinemaSoundscapeProps) {
+export default function CinemaSoundscape({ enabled, onEnabledChange, sectionIndex, closingCreditsOpen, showControl = true }: CinemaSoundscapeProps) {
   const graphRef = useRef<SoundGraph | null>(null);
   const previousSectionRef = useRef(sectionIndex);
 
-  function ensureSoundGraph() {
+  const ensureSoundGraph = useCallback(() => {
     if (graphRef.current) return graphRef.current;
 
     const context = new AudioContext();
@@ -96,7 +97,7 @@ export default function CinemaSoundscape({ enabled, onEnabledChange, sectionInde
 
     graphRef.current = { context, master, closingPiano };
     return graphRef.current;
-  }
+  }, []);
 
   async function toggleSoundscape() {
     const nextEnabled = !enabled;
@@ -108,6 +109,13 @@ export default function CinemaSoundscape({ enabled, onEnabledChange, sectionInde
     }
     onEnabledChange(nextEnabled);
   }
+
+  useEffect(() => {
+    const graph = enabled ? ensureSoundGraph() : graphRef.current;
+    if (!graph) return;
+    if (enabled) void graph.context.resume();
+    else void graph.context.suspend();
+  }, [enabled, ensureSoundGraph]);
 
   useEffect(() => {
     if (previousSectionRef.current === sectionIndex) return;
@@ -161,7 +169,7 @@ export default function CinemaSoundscape({ enabled, onEnabledChange, sectionInde
     if (graph) void graph.context.close();
   }, []);
 
-  return (
+  return showControl ? (
     <button
       className={`hero-sound${enabled ? "" : " is-muted"}`}
       type="button"
@@ -181,5 +189,5 @@ export default function CinemaSoundscape({ enabled, onEnabledChange, sectionInde
       </span>
       <span className="hero-sound-lamp" aria-hidden="true" />
     </button>
-  );
+  ) : null;
 }

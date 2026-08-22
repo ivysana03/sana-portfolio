@@ -200,6 +200,12 @@ p { text-wrap: pretty; }
 .projected-method { grid-template-columns: .72fr 1.28fr; }
 .projected-method-copy { animation: scene-title-card 900ms cubic-bezier(.16,.72,.24,1) both; }
 .projected-method-copy > p { max-width: 24rem; margin-top: 1rem; color: rgba(244,242,235,.58); font-family: var(--serif); font-size: .82rem; line-height: 1.45; animation: scene-body-reveal 900ms 180ms cubic-bezier(.16,.72,.24,1) both; }
+.projected-method-navigation { display: flex; gap: 1.1rem; margin-top: 1.2rem; }
+.projected-method-navigation button { display: grid; width: 2.4rem; height: 2.4rem; place-items: center; padding: 0; border: 0; background: transparent; color: rgba(244,242,235,.58); font-size: 1.15rem; font-weight: 300; cursor: pointer; transition: color 320ms ease, transform 320ms cubic-bezier(.16,.72,.24,1); }
+.projected-method-navigation button:hover { color: #fff; }
+.projected-method-navigation button:first-child:hover { transform: translateX(-.18rem); }
+.projected-method-navigation button:last-child:hover { transform: translateX(.18rem); }
+.projected-method-navigation button:focus-visible { outline: 1px solid var(--signal); outline-offset: 1px; }
 .projected-process-list { display: grid; grid-template-columns: 1fr 1fr; align-self: center; border-top: 1px solid rgba(244,242,235,.18); border-left: 1px solid rgba(244,242,235,.18); }
 .projected-process-list > button { display: flex; min-height: 10rem; flex-direction: column; border: 0; border-right: 1px solid rgba(244,242,235,.18); border-bottom: 1px solid rgba(244,242,235,.18); padding: 1.15rem; background: transparent; color: inherit; text-align: left; cursor: pointer; }
 .projected-process-list > button:nth-child(3) { grid-column: 2; grid-row: 2; }
