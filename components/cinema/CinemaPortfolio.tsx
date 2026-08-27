@@ -39,31 +39,14 @@ const processSteps = [
   { number: "04", title: "Edit & Finish", detail: "Rhythm · Sound · Grade", copy: "Shape picture, sound and colour into the final emotional rhythm." },
 ];
 const itemCounts = [films.length, 1, selectedCredits.length, services.length, processSteps.length, 1];
-
-const seatRows = [8, 8, 7, 6, 5, 5, 4].map((seatsPerSide, index) => {
-  const scale = 0.85 ** index;
-  const brightness = Math.min(0.88, 0.68 + index * 0.035);
-  const rimLight = Math.min(0.3, 0.18 + index * 0.02);
-  let rise = -1.5;
-
-  for (let step = 0; step < index; step += 1) {
-    rise += 5.5 * 0.8 ** step;
-  }
-
-  return {
-    seatsPerSide,
-    style: {
-      "--row-brightness": brightness,
-      "--rim-light": rimLight,
-      "--seat-width": `clamp(${(3.8 * scale).toFixed(2)}rem, ${(5.2 * scale).toFixed(2)}vw, ${(6 * scale).toFixed(2)}rem)`,
-      "--seat-gap": `${(0.55 * scale).toFixed(2)}rem`,
-      "--aisle-width": `clamp(${(4.8 * scale).toFixed(2)}rem, ${(11.5 * scale).toFixed(2)}vw, ${(10.5 * scale).toFixed(2)}rem)`,
-      bottom: `${rise.toFixed(2)}svh`,
-      height: `${(9.8 * scale).toFixed(2)}svh`,
-      zIndex: 7 - index,
-    } as CSSProperties,
-  };
-});
+const workVisualTreatments = [
+  { accent: "#d58b56", shadow: "#24100c", angle: "132deg" },
+  { accent: "#8da9b8", shadow: "#0b1a22", angle: "38deg" },
+  { accent: "#c9b277", shadow: "#201a0b", angle: "168deg" },
+  { accent: "#b86b55", shadow: "#24100f", angle: "212deg" },
+  { accent: "#b9a17b", shadow: "#17130e", angle: "24deg" },
+  { accent: "#9aabb8", shadow: "#0b1218", angle: "300deg" },
+] as const;
 
 function getNestedScrollRegion(target: EventTarget | null) {
   return target instanceof Element ? target.closest<HTMLElement>('[data-scroll-region="items-list"]') : null;
@@ -126,7 +109,7 @@ function animateTheatreCamera(theatre: HTMLElement, fromProgress: number, toProg
   const target = getTheatrePose(toProgress);
   const overshoot = (start: number, end: number, amount: number) => end + (end - start) * amount;
   const layers = {
-    hall: theatre.querySelector<HTMLElement>(".hero-hall"),
+    hall: theatre.querySelector<HTMLElement>(".cinema-camera"),
     seats: theatre.querySelector<HTMLElement>(".hero-audience"),
     aisle: theatre.querySelector<HTMLElement>(".theatre-aisle"),
     beam: theatre.querySelector<HTMLElement>(".projector-beam"),
@@ -255,8 +238,10 @@ export default function CinemaPortfolio() {
   }, [selectSection]);
 
   const selectActiveItem = useCallback((nextIndex: number) => {
+    const direction = Math.sign(nextIndex - activeItemRef.current) || 1;
     activeItemRef.current = nextIndex;
     setActiveItemIndex(nextIndex);
+    theatreRef.current?.style.setProperty("--work-cut-x", direction > 0 ? ".8rem" : "-.8rem");
 
     requestAnimationFrame(() => {
       const list = itemListRef.current;
@@ -324,7 +309,9 @@ export default function CinemaPortfolio() {
       const eventDirection = Math.sign(event.deltaY) as -1 | 0 | 1;
       if (wheelSectionChangedRef.current) {
         if (eventDirection === 0 || eventDirection === wheelSectionDirectionRef.current) {
-          scheduleWheelReset();
+          // Keep the cooldown anchored to the section transition. Restarting
+          // it for every trackpad tick makes a continuous gesture stay locked
+          // forever, which is especially noticeable after entering Work.
           return;
         }
 
@@ -473,12 +460,15 @@ export default function CinemaPortfolio() {
           stepSection(deltaY < 0 ? 1 : -1);
         }}
       >
-        <Image className="hero-hall" data-camera-layer src="/cinema/archive-hall.jpeg" alt="" fill priority sizes="100vw" />
-        <div className="cinema-entrance-lights" aria-hidden="true" />
-        <div className="projector-bounce" aria-hidden="true" />
         <h1 className="sr-only" id="experience-title">Sana Sheikh — AI Film Director</h1>
 
-        <div className="hero-screen" id="theatre-screen">
+        <div className="cinema-camera" data-camera-layer>
+          <Image className="hero-hall" src="/newbg.png" alt="" fill priority sizes="100vw" />
+          <div className="cinema-entrance-lights" aria-hidden="true" />
+          <div className="hero-shade" aria-hidden="true" />
+          <div className="projector-bounce" aria-hidden="true" />
+          <div className="projector-beam" data-camera-layer aria-hidden="true" />
+          <div className="hero-screen" id="theatre-screen">
           <div className="screen-chapter" key={activeSectionIndex} aria-live="polite">
             {activeSectionIndex === 0 ? <HeroProjection activeIndex={activeItemIndex} films={films} onStepItem={stepActiveItem} soundEnabled={soundEnabled} onSoundEnabledChange={setSoundEnabled} /> : null}
 
@@ -487,12 +477,10 @@ export default function CinemaPortfolio() {
                 <div className="projected-image"><Image src={directorPortrait} alt="Portrait of director Sana Sheikh" fill sizes="(max-width: 720px) 94vw, 31vw" /></div>
                 <div className="projected-copy">
                   <span className="director-kicker">02 / The Director</span>
-                  <h2 className="director-title">
-                    <span className="director-title-line">Not generating.</span>
-                    <span className="director-title-line director-title-accent"><em>Directing.</em></span>
-                  </h2>
-                  <p>Sana Sheikh evolved from acting and modelling into an AI film production practice. That performance foundation shapes how she directs expression, framing, emotion and visual language.</p>
-                  <p>She carries each film from narrative architecture and visual development through generation, edit, sound and grade.</p>
+                  <p>Sana Sheikh is a visual storyteller and director drawn to stories that make you pause, feel something, or see the familiar a little differently.</p>
+                  <p>Her journey into filmmaking began with acting and modelling, where she learned to notice the details that often speak louder than words — a fleeting look, the weight of a silence, or the way a frame can shift a feeling.</p>
+                  <p>She believes technology is the medium; human feeling is the point.</p>
+                  <p>Today, she brings that instinct to AI filmmaking, shaping ideas from the first spark to the final frame, with equal attention to story, performance, visuals, and the details that make a film feel alive.</p>
                   <small>Acting & Modelling · Direction · Visual Development · Post</small>
                 </div>
               </article>
@@ -500,7 +488,7 @@ export default function CinemaPortfolio() {
 
             {activeSectionIndex === 2 ? (
               <article className="projected-panel projected-work">
-                <div className="projected-work-feature">
+                <div className="projected-work-feature" key={activeWork.title}>
                   {activeWork.media ? (
                     <div className="projected-work-media" key={activeWork.title}>
                       {activeWork.media.kind === "image" ? (
@@ -510,10 +498,19 @@ export default function CinemaPortfolio() {
                       )}
                     </div>
                   ) : (
-                    <header className="projected-work-heading">
-                      <span className="projected-work-kicker">03 / Selected Work</span>
-                      <h2>A developing body<br />of <em>directed work.</em></h2>
-                    </header>
+                    <div
+                      className="projected-work-media projected-work-art"
+                      style={{
+                        "--work-accent": workVisualTreatments[activeItemIndex]?.accent ?? workVisualTreatments[0].accent,
+                        "--work-shadow": workVisualTreatments[activeItemIndex]?.shadow ?? workVisualTreatments[0].shadow,
+                        "--work-angle": workVisualTreatments[activeItemIndex]?.angle ?? workVisualTreatments[0].angle,
+                      } as CSSProperties}
+                      aria-label={`${activeWork.title} visual treatment`}
+                    >
+                      <span className="projected-work-art-index">{String(activeItemIndex + 1).padStart(2, "0")}</span>
+                      <strong>{activeWork.title}</strong>
+                      <small>Selected work · Director · {activeWork.year}</small>
+                    </div>
                   )}
                   <div className="projected-work-caption" aria-live="polite">
                     <p className="projected-work-caption-label">A developing body of directed work.</p>
@@ -596,33 +593,30 @@ export default function CinemaPortfolio() {
 
           {closingCreditsOpen ? (
             <div className="closing-credits" role="status" aria-label="Closing credits">
-              <div className="closing-credits-roll">
-                <small>A film experience by</small>
-                <h2>Sana Sheikh</h2>
-                <p>Direction · Performance · Visual Development · Post</p>
-                <span>Original films and visual worlds<br />directed through an AI-native production process.</span>
-                <strong>End of programme</strong>
-                <em>Scroll up to return</em>
+              <div className="closing-credits-window">
+                <div className="closing-credits-roll">
+                  <small>End credits</small>
+                  <h2>Sana Sheikh</h2>
+                  <div className="closing-credit-rows" aria-label="Production credits">
+                    <p><span>Director</span><strong>Sana Sheikh</strong></p>
+                    <p><span>AI production</span><strong>House 01</strong></p>
+                    <p><span>Visual development</span><strong>Original worlds</strong></p>
+                    <p><span>Films</span><strong>Misty Realm · Tide Line</strong></p>
+                    <p><span>Direction</span><strong>Performance · Edit · Grade</strong></p>
+                  </div>
+                  <em>End of programme</em>
+                </div>
+                <div className="closing-credits-final" aria-label="End of programme">
+                  <small>End of programme</small>
+                  <strong>Sana Sheikh</strong>
+                  <em>Start a film · Scroll up to return</em>
+                </div>
               </div>
             </div>
           ) : null}
+          </div>
         </div>
 
-        <div className="projector-beam" data-camera-layer aria-hidden="true" />
-        <div className="theatre-aisle" data-camera-layer aria-hidden="true" />
-        <div className="hero-audience" data-camera-layer aria-hidden="true">
-          {seatRows.map((row, rowIndex) => (
-            <div className="seat-row" key={rowIndex} style={row.style}>
-              <div className="seat-bank">
-                {Array.from({ length: row.seatsPerSide }).map((_, seatIndex) => <i key={seatIndex} />)}
-              </div>
-              <div className="seat-bank">
-                {Array.from({ length: row.seatsPerSide }).map((_, seatIndex) => <i key={seatIndex} />)}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="hero-shade" data-camera-layer aria-hidden="true" />
         <div className="theatre-atmosphere" aria-hidden="true" />
         <div className="projection-readout" aria-hidden="true"><span>Sana Sheikh · AI Film Director</span><span>House 01 / {chapters[activeSectionIndex]}</span></div>
         <p className="theatre-instruction">Scroll sections · Arrows browse items</p>
