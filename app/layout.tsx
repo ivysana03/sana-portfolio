@@ -62,7 +62,8 @@ export const metadata: Metadata = {
     description: "Original films and visual worlds, directed by Sana Sheikh.",
   },
   icons: {
-    icon: "/logo.png",
+    icon: [{ url: "/logo.svg", type: "image/svg+xml" }],
+    shortcut: "/logo.svg",
     apple: "/logo.png",
   },
 };
