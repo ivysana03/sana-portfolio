@@ -76,7 +76,7 @@ export default function HeroProjection({ activeIndex, films, onStepItem, soundEn
       <video
         key={activeFilm.src}
         ref={videoRef}
-        className={activeFilm.portrait ? "hero-film is-portrait" : "hero-film"}
+        className={activeFilm.portrait ? "hero-film is-portrait credits-rise-item" : "hero-film credits-rise-item"}
         src={activeFilm.src}
         poster={activeFilm.poster}
         autoPlay
@@ -93,11 +93,11 @@ export default function HeroProjection({ activeIndex, films, onStepItem, soundEn
       <div className="hero-film-vignette" aria-hidden="true" />
 
       <div className="hero-film-controls" aria-live="polite">
-        <div className="hero-film-caption">
+        <div className="hero-film-caption credits-rise-item">
           <span>Now playing — <strong>{activeFilm.title}</strong></span>
           <small>{String(activeIndex + 1).padStart(2, "0")} / {String(films.length).padStart(2, "0")} · {activeFilm.duration}</small>
         </div>
-        <div className="hero-film-actions">
+        <div className="hero-film-actions credits-rise-item">
           <button
             className="hero-film-sound"
             type="button"
