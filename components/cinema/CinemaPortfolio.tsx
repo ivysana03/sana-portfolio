@@ -360,6 +360,7 @@ export default function CinemaPortfolio() {
           <div className="cinema-entrance-lights" aria-hidden="true" />
           <div className="hero-shade" aria-hidden="true" />
           <div className="projector-bounce" aria-hidden="true" />
+          <div className="cinematic-ambient-light" aria-hidden="true" />
           <div className="projector-beam" data-camera-layer aria-hidden="true" />
           <div className="hero-screen" id="theatre-screen">
           <div
