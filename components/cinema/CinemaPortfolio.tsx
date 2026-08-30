@@ -456,7 +456,6 @@ export default function CinemaPortfolio() {
                         <div><dt>Runtime</dt><dd>{activeService.screenRuntime}</dd></div>
                         <div><dt>Direction</dt><dd>{activeService.screenDiscipline}</dd></div>
                       </dl>
-                      <small className="projected-service-note">Editorial service study · No representative film attached</small>
                     </div>
                     <div className={`projected-service-frame projected-service-artwork motif-${activeService.artwork.motif}`} role="img" aria-label={activeService.artwork.label}>
                       <div className="projected-service-abstract"><i /><i /><i /><i /></div>
