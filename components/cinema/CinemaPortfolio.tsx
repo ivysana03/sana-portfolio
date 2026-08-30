@@ -41,10 +41,10 @@ const theatreCameraStops: readonly TheatrePose[] = [
 ];
 
 const processSteps = [
-  { number: "01", title: "Story & Treatment", detail: "Intent before imagery", copy: "Define the emotion, audience and dramatic rules before a frame is generated." },
-  { number: "02", title: "World & Performance", detail: "Casting · Lens · Light", copy: "Direct character, environment, camera and performance as one visual system." },
-  { number: "03", title: "Shot Production", detail: "Generate · Select · Rebuild", copy: "Build shots for continuity rather than treating them as isolated prompts." },
-  { number: "04", title: "Edit & Finish", detail: "Rhythm · Sound · Grade", copy: "Shape picture, sound and colour into the final emotional rhythm." },
+  { number: "01", title: "Story & Treatment", detail: "Intent before imagery", copy: "Define the emotion, audience and dramatic rules before a frame is generated.", artwork: { motif: "intent", label: "Intent and treatment diagram" } },
+  { number: "02", title: "World & Performance", detail: "Casting · Lens · Light", copy: "Direct character, environment, camera and performance as one visual system.", artwork: { motif: "world", label: "World and performance composition" } },
+  { number: "03", title: "Shot Production", detail: "Generate · Select · Rebuild", copy: "Build shots for continuity rather than treating them as isolated prompts.", artwork: { motif: "shots", label: "Shot production grid" } },
+  { number: "04", title: "Edit & Finish", detail: "Rhythm · Sound · Grade", copy: "Shape picture, sound and colour into the final emotional rhythm.", artwork: { motif: "edit", label: "Edit and finish timeline" } },
 ];
 const itemCounts = [films.length, 1, selectedCredits.length, services.length, processSteps.length, 1];
 const workVisualTreatments = [
@@ -472,7 +472,7 @@ export default function CinemaPortfolio() {
                 <header className="projected-method-copy">
                   <span className="credits-rise-item">05 / AI-native Production</span>
                   <h2 className="credits-rise-item">Method.<br /><em>Made visible.</em></h2>
-                  <div className="projected-method-frame" aria-hidden="true"><span>{activeMethod.number}</span><i /><i /><i /></div>
+                  <div className={`projected-method-frame method-artwork motif-${activeMethod.artwork.motif}`} role="img" aria-label={activeMethod.artwork.label}><span>{activeMethod.number}</span><i /><i /><i /></div>
                   <div className="projected-method-detail credits-rise-item"><small>{activeMethod.number} / {activeMethod.detail}</small><strong>{activeMethod.title}</strong><p>{activeMethod.copy}</p></div>
                   <div className="projected-method-navigation credits-rise-item" aria-label="Browse method steps">
                     <button type="button" onClick={() => stepActiveItem(-1)} aria-label="Previous method step">←</button>
