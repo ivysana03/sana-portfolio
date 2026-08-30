@@ -752,9 +752,14 @@ h1 em, h2 em { color: var(--signal); font-weight: 400; }
   .projected-copy p { margin-bottom: .5rem; font-size: .82rem; }
   .projected-copy small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .projected-work, .projected-services, .projected-method { display: block; padding: 2.65rem 1rem .75rem; }
+  .projected-work { display: grid; height: 100%; min-height: 0; grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); gap: .8rem; overflow: visible; }
+  .projected-work-feature { min-height: 0; justify-content: flex-start; }
+  .projected-work-media { flex: 0 0 auto; }
+  .projected-work > .work-cursor-zone { height: 100%; min-height: 0; overflow: visible; }
   .projected-work header, .projected-services header, .projected-method header { margin-bottom: .8rem; }
   .projected-work header h2, .projected-services header h2, .projected-method header h2 { margin-top: .45rem; }
   .projected-credit-list, .projected-service-list { height: auto; max-height: 100%; }
+  .projected-work .projected-credit-list { min-height: 0; height: 100%; max-height: none; overflow-y: auto; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; padding-bottom: 1.5rem; touch-action: pan-y; }
   .projected-credit-row { min-height: 2.35rem; }
   .projected-credit-title { font-size: 1rem; }
   .projected-credit-meta { font-size: .35rem; }
