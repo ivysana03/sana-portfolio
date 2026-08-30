@@ -8,6 +8,11 @@ type LenisController = {
 
 export default function SmoothScroll() {
   useEffect(() => {
+    // CinemaPortfolio owns a single, manually-driven Lenis instance so it can
+    // map scroll progress to the theatre camera. A second global controller
+    // would compete for the same wheel events and make the room jump/flicker.
+    if (window.location.pathname === "/") return;
+
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let lenis: LenisController | null = null;
     let disposed = false;

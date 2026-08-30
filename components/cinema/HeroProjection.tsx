@@ -14,7 +14,10 @@ type HeroProjectionProps = {
 export default function HeroProjection({ activeIndex, films, onStepItem, soundEnabled, onSoundEnabledChange }: HeroProjectionProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
-  const activeFilm = films[activeIndex];
+  // Section changes reset the shared item index asynchronously. Clamp it here
+  // so a stale index can never crash the video projection between renders.
+  const safeActiveIndex = films.length > 0 ? Math.max(0, Math.min(activeIndex, films.length - 1)) : 0;
+  const activeFilm = films[safeActiveIndex];
 
   useEffect(() => {
     const video = videoRef.current;
@@ -73,7 +76,7 @@ export default function HeroProjection({ activeIndex, films, onStepItem, soundEn
       aria-roledescription="film reel"
       aria-label="Featured film screenings"
     >
-      <video
+      {activeFilm ? <video
         key={activeFilm.src}
         ref={videoRef}
         className={activeFilm.portrait ? "hero-film is-portrait credits-rise-item" : "hero-film credits-rise-item"}
@@ -87,15 +90,15 @@ export default function HeroProjection({ activeIndex, films, onStepItem, soundEn
         onPointerDown={(event) => { pointerStart.current = { x: event.clientX, y: event.clientY }; }}
         onPointerUp={(event) => finishSwipe(event.clientX, event.clientY)}
         onPointerCancel={() => { pointerStart.current = null; }}
-        aria-label={`${activeFilm.title}, film ${activeIndex + 1} of ${films.length}`}
-      />
+        aria-label={`${activeFilm.title}, film ${safeActiveIndex + 1} of ${films.length}`}
+      /> : null}
 
       <div className="hero-film-vignette" aria-hidden="true" />
 
       <div className="hero-film-controls" aria-live="polite">
         <div className="hero-film-caption credits-rise-item">
-          <span>Now playing — <strong>{activeFilm.title}</strong></span>
-          <small>{String(activeIndex + 1).padStart(2, "0")} / {String(films.length).padStart(2, "0")} · {activeFilm.duration}</small>
+          <span>Now playing — <strong>{activeFilm?.title ?? "Preparing projection"}</strong></span>
+          <small>{String(safeActiveIndex + 1).padStart(2, "0")} / {String(films.length).padStart(2, "0")} · {activeFilm?.duration ?? "—"}</small>
         </div>
         <div className="hero-film-actions credits-rise-item">
           <button

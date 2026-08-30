@@ -3,15 +3,23 @@
 import Image from "next/image";
 import Lenis from "lenis";
 import type { CSSProperties } from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { films, selectedCredits, services } from "@/lib/portfolio";
 import directorPortrait from "@/src/assets/image/sana.jpeg";
 import CinemaSoundscape from "./CinemaSoundscape";
+import CursorPreview from "./CursorPreview";
 import HeroProjection from "./HeroProjection";
+import ReelIndicator from "./ReelIndicator";
 
 const chapters = ["Films", "Director", "Work", "Services", "Method", "Contact"] as const;
 const navigableSectionCount = 5;
 const finalSectionIndex = chapters.length - 1;
+const sectionBoundaryHysteresis = 0.55;
+// Keep the end-credits overlay away from the Contact/Method boundary. A wide
+// hysteresis window prevents trackpad momentum from repeatedly mounting the
+// visual end state while the final chapter is still settling.
+const creditsEnterThreshold = finalSectionIndex + 0.82;
+const creditsExitThreshold = finalSectionIndex + 0.18;
 
 type TheatrePose = {
   hallShift: number;
@@ -71,8 +79,10 @@ function getTheatrePose(progress: number): TheatrePose {
 function setTheatreCamera(theatre: HTMLElement, progress: number) {
   const pose = getTheatrePose(progress);
 
-  theatre.style.setProperty("--hall-shift", `${pose.hallShift.toFixed(2)}svh`);
-  theatre.style.setProperty("--hall-scale", pose.hallScale.toFixed(3));
+  // Keep the projection screen locked in place; scroll-driven camera movement
+  // applies only to the ambient theatre layers below.
+  theatre.style.setProperty("--hall-shift", "0svh");
+  theatre.style.setProperty("--hall-scale", "1.025");
   theatre.style.setProperty("--seat-shift", `${pose.seatShift.toFixed(2)}svh`);
   theatre.style.setProperty("--seat-scale", pose.seatScale.toFixed(3));
   theatre.style.setProperty("--aisle-scale", pose.aisleScale.toFixed(3));
@@ -80,9 +90,23 @@ function setTheatreCamera(theatre: HTMLElement, progress: number) {
   theatre.style.setProperty("--vignette-opacity", pose.vignetteOpacity.toFixed(2));
 }
 
+function resolveStableSection(roomPosition: number, currentSection: number) {
+  let nextSection = currentSection;
+
+  while (nextSection < finalSectionIndex && roomPosition >= nextSection + sectionBoundaryHysteresis) {
+    nextSection += 1;
+  }
+  while (nextSection > 0 && roomPosition <= nextSection - sectionBoundaryHysteresis) {
+    nextSection -= 1;
+  }
+
+  return nextSection;
+}
+
 export default function CinemaPortfolio() {
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
   const [activeItemIndex, setActiveItemIndex] = useState(0);
+  const [activeServiceIndex, setActiveServiceIndex] = useState(0);
   const [closingCreditsOpen, setClosingCreditsOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [sent, setSent] = useState(false);
@@ -90,6 +114,7 @@ export default function CinemaPortfolio() {
   const itemListRef = useRef<HTMLElement>(null);
   const activeSectionRef = useRef(0);
   const activeItemRef = useRef(0);
+  const activeServiceRef = useRef(0);
   const closingCreditsRef = useRef(false);
   const lenisRef = useRef<Lenis | null>(null);
   const cameraProgressRef = useRef(0);
@@ -104,6 +129,10 @@ export default function CinemaPortfolio() {
     if (!sectionChanged && !showCredits) return;
     activeItemRef.current = 0;
     setActiveItemIndex(0);
+    if (nextIndex === 3) {
+      activeServiceRef.current = 0;
+      setActiveServiceIndex(0);
+    }
 
     const focusedControl = document.activeElement;
     if (
@@ -117,12 +146,18 @@ export default function CinemaPortfolio() {
 
   const selectSection = useCallback((index: number) => {
     const nextIndex = Math.max(0, Math.min(finalSectionIndex, index));
+    // Hide the end-credits overlay immediately when a nav click leaves the
+    // final chapter; the scroll animation will then reveal the destination
+    // section without credits lingering over it.
+    if (nextIndex !== finalSectionIndex && closingCreditsRef.current) {
+      closingCreditsRef.current = false;
+      setClosingCreditsOpen(false);
+    }
     const lenis = lenisRef.current;
     if (lenis) {
-      // Land inside the room so its entrance choreography has resolved when
-      // navigation is used. Contact stays below the credits threshold.
-      const roomOffset = nextIndex === finalSectionIndex ? 0.25 : nextIndex === 0 ? 0 : 0.5;
-      lenis.scrollTo((nextIndex + roomOffset) * window.innerHeight, { duration: 1.15, lock: true });
+      // Each chapter has a stable integer anchor. This keeps Lenis away from
+      // the hysteresis thresholds after navigation and prevents room toggling.
+      lenis.scrollTo(nextIndex * window.innerHeight, { duration: 1.15, lock: true });
       return;
     }
     syncSectionState(nextIndex, false);
@@ -144,14 +179,28 @@ export default function CinemaPortfolio() {
     });
   }, []);
 
+  const selectService = useCallback((nextIndex: number) => {
+    const safeIndex = Math.max(0, Math.min(services.length - 1, nextIndex));
+    activeServiceRef.current = safeIndex;
+    setActiveServiceIndex(safeIndex);
+  }, []);
+
+  const stepService = useCallback((direction: number) => {
+    selectService((activeServiceRef.current + direction + services.length) % services.length);
+  }, [selectService]);
+
   const stepActiveItem = useCallback((direction: number) => {
+    if (activeSectionRef.current === 3) {
+      stepService(direction);
+      return;
+    }
     const count = itemCounts[activeSectionRef.current] ?? 1;
     if (count <= 1) return;
     const nextIndex = (activeItemRef.current + direction + count) % count;
     selectActiveItem(nextIndex);
-  }, [selectActiveItem]);
+  }, [selectActiveItem, stepService]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const theatre = theatreRef.current;
     if (!theatre) return;
     const lenis = new Lenis({
@@ -166,8 +215,16 @@ export default function CinemaPortfolio() {
     const syncFromScroll = ({ scroll, limit }: { scroll: number; limit: number }) => {
       const viewportHeight = window.innerHeight || 1;
       const roomPosition = Math.max(0, Math.min(finalSectionIndex + 1, scroll / viewportHeight));
-      const showCredits = roomPosition >= finalSectionIndex + 0.5;
-      const nextSection = Math.min(finalSectionIndex, Math.floor(roomPosition));
+      // Resolve the chapter first, then derive the credits state from that
+      // same authoritative value. Previously credits were evaluated directly
+      // from the fractional scroll position, so end-state rendering could be
+      // true while the section controller had already moved to Method (or was
+      // moving back from Contact). That left two independent visibility paths
+      // briefly competing for the screen during reverse navigation.
+      const nextSection = resolveStableSection(roomPosition, activeSectionRef.current);
+      const showCredits = closingCreditsRef.current
+        ? nextSection === finalSectionIndex && roomPosition >= creditsExitThreshold
+        : nextSection === finalSectionIndex && roomPosition >= creditsEnterThreshold;
       cameraProgressRef.current = Math.min(finalSectionIndex, roomPosition);
       setTheatreCamera(theatre, cameraProgressRef.current);
       if (nextSection !== activeSectionRef.current || showCredits !== closingCreditsRef.current) {
@@ -177,6 +234,11 @@ export default function CinemaPortfolio() {
     };
     lenis.on("scroll", syncFromScroll);
     lenis.scrollTo(initialScroll, { immediate: true });
+    // `scrollTo(..., { immediate: true })` does not emit a scroll event in
+    // every Lenis version. Synchronize the initial browser position explicitly
+    // so a restored deep link/session cannot render Films with end credits (or
+    // any other stale chapter) on top.
+    syncFromScroll({ scroll: initialScroll, limit: lenis.limit });
 
     let frame = 0;
     const raf = (time: number) => {
@@ -220,19 +282,28 @@ export default function CinemaPortfolio() {
   }
 
   function lockContactScroll() {
-    const lenis = lenisRef.current;
-    if (!lenis) return;
-    lenis.stop();
+    // Do not stop Lenis here. Its `lenis-stopped` class changes the document
+    // scroll container and breaks the sticky theatre when an input receives
+    // focus. The form's onWheel/onTouchMove handlers already contain input
+    // interaction without changing the page scroll geometry.
   }
 
   function releaseContactScroll() {
-    lenisRef.current?.start();
+    // Kept as a paired handler for the form boundary; Lenis remains running.
   }
 
   const activeWork = selectedCredits[activeItemIndex] ?? selectedCredits[0];
+  const activeService = services[activeServiceIndex] ?? services[0];
+  const activeMethod = processSteps[activeItemIndex] ?? processSteps[0];
   const setItemListElement = useCallback((node: HTMLElement | null) => {
     itemListRef.current = node;
   }, []);
+
+  useEffect(() => {
+    itemListRef.current = theatreRef.current?.querySelector<HTMLElement>(
+      ".screen-section.is-active [data-scroll-region='items-list']",
+    ) ?? null;
+  }, [activeSectionIndex]);
 
   return (
     <main className="cinema-experience">
@@ -296,9 +367,11 @@ export default function CinemaPortfolio() {
             data-room="chapter"
             aria-live="polite"
           >
-            {activeSectionIndex === 0 ? <HeroProjection activeIndex={activeItemIndex} films={films} onStepItem={stepActiveItem} soundEnabled={soundEnabled} onSoundEnabledChange={setSoundEnabled} /> : null}
+            <div className={`screen-section screen-section-films${activeSectionIndex === 0 ? " is-active" : ""}`} aria-hidden={activeSectionIndex !== 0}>
+              <HeroProjection activeIndex={activeItemIndex} films={films} onStepItem={stepActiveItem} soundEnabled={soundEnabled} onSoundEnabledChange={setSoundEnabled} />
+            </div>
 
-            {activeSectionIndex === 1 ? (
+            <div className={`screen-section screen-section-director${activeSectionIndex === 1 ? " is-active" : ""}`} aria-hidden={activeSectionIndex !== 1}>
               <article className="projected-panel projected-director">
                 <div className="projected-image credits-rise-item"><Image src={directorPortrait} alt="Portrait of director Sana Sheikh" fill sizes="(max-width: 720px) 94vw, 31vw" /></div>
                 <div className="projected-copy">
@@ -310,9 +383,9 @@ export default function CinemaPortfolio() {
                   <small className="credits-rise-item">Acting & Modelling · Direction · Visual Development · Post</small>
                 </div>
               </article>
-            ) : null}
+            </div>
 
-            {activeSectionIndex === 2 ? (
+            <div className={`screen-section screen-section-work${activeSectionIndex === 2 ? " is-active" : ""}`} aria-hidden={activeSectionIndex !== 2}>
               <article className="projected-panel projected-work">
                 <div className="projected-work-feature" key={activeWork.title}>
                   {activeWork.media ? (
@@ -343,41 +416,58 @@ export default function CinemaPortfolio() {
                     <p className="projected-work-caption-current credits-rise-item">Now viewing · {String(activeItemIndex + 1).padStart(2, "0")} — {activeWork.title}</p>
                   </div>
                 </div>
+                <CursorPreview items={selectedCredits.map((credit, index) => ({ id: credit.title, label: credit.title, accent: workVisualTreatments[index % workVisualTreatments.length].accent, image: credit.media?.kind === "video" ? credit.media.poster : credit.media?.src }))}>
                 <ol className="projected-credit-list" ref={setItemListElement} data-scroll-region="items-list" data-lenis-prevent>
-                  {selectedCredits.map((credit, index) => (
-                    <li className="projected-credit-item credits-rise-item" key={credit.title} style={{ "--credits-rise-order": index + 3 } as CSSProperties}>
-                      <button
-                        className={`projected-credit-row${activeItemIndex === index ? " is-active" : ""}${credit.media?.thumbnailSrc ? " has-thumbnail" : ""}`}
-                        data-item-index={index}
-                        type="button"
-                        onClick={() => selectActiveItem(index)}
-                        aria-current={activeItemIndex === index ? "true" : undefined}
-                      >
-                        <span className="projected-credit-number">{String(index + 1).padStart(2, "0")}</span>
-                        {credit.media?.thumbnailSrc ? <Image className="projected-credit-thumbnail" src={credit.media.thumbnailSrc} alt="" width={80} height={45} /> : null}
-                        <strong className="projected-credit-title">{credit.title}</strong>
-                        <small className="projected-credit-meta">{credit.role} · {credit.year}</small>
-                      </button>
-                    </li>
-                  ))}
+                    {selectedCredits.map((credit, index) => (
+                      <li className="projected-credit-item credits-rise-item" key={credit.title} style={{ "--credits-rise-order": index + 3 } as CSSProperties}>
+                        <button
+                          className={`projected-credit-row${activeItemIndex === index ? " is-active" : ""}${credit.media?.thumbnailSrc ? " has-thumbnail" : ""}`}
+                          data-preview-id={credit.title}
+                          data-item-index={index}
+                          type="button"
+                          onClick={() => selectActiveItem(index)}
+                          aria-current={activeItemIndex === index ? "true" : undefined}
+                        >
+                          <span className="projected-credit-number">{String(index + 1).padStart(2, "0")}</span>
+                          {credit.media?.thumbnailSrc ? <Image className="projected-credit-thumbnail" src={credit.media.thumbnailSrc} alt="" width={80} height={45} /> : null}
+                          <strong className="projected-credit-title">{credit.title}</strong>
+                          <small className="projected-credit-meta">{credit.role} · {credit.year}</small>
+                        </button>
+                      </li>
+                    ))}
                 </ol>
+                </CursorPreview>
               </article>
-            ) : null}
+            </div>
 
-            {activeSectionIndex === 3 ? (
-              <article className="projected-panel projected-services">
-                <header><span className="credits-rise-item">04 / Commission a Film</span><h2 className="credits-rise-item">Cinema for stories,<br />artists & <em>brands.</em></h2></header>
-                <div className="projected-service-list" ref={setItemListElement} data-scroll-region="items-list" data-lenis-prevent>
-                  {services.map((service, index) => <div className={`${activeItemIndex === index ? "is-active " : ""}credits-rise-item`} style={{ "--credits-rise-order": index + 2 } as CSSProperties} data-item-index={index} key={service.number}><span>{service.number}</span><div><strong>{service.title}</strong><small>{service.summary}</small></div><em>{service.timeline.replace("Typical timeline · ", "")}</em></div>)}
+            <div className={`screen-section screen-section-services${activeSectionIndex === 3 ? " is-active" : ""}`} data-service-index={activeServiceIndex} aria-hidden={activeSectionIndex !== 3}>
+              <article className="projected-panel projected-services-single">
+                <div className="projected-service-scene" key={activeService.number}>
+                  <div className={`projected-service-frame projected-service-artwork motif-${activeService.artwork.motif}`} role="img" aria-label={activeService.artwork.label}><div className="projected-service-abstract"><i /><i /><i /><i /></div></div>
+                  <header>
+                    <span>04 / Commission a Film · {activeService.number} / 04</span>
+                    <h2>{activeService.title}</h2>
+                    <p>{activeService.cardTagline}</p>
+                    <p className="projected-service-note-line">{activeService.screenNote}</p>
+                  </header>
+                  <dl className="projected-service-credits">
+                    <div><dt>Type</dt><dd>{activeService.screenType}</dd></div>
+                    <div><dt>Runtime</dt><dd>{activeService.screenRuntime}</dd></div>
+                    <div><dt>Direction</dt><dd>{activeService.screenDiscipline}</dd></div>
+                  </dl>
+                  <small className="projected-service-note">Editorial service study · No representative film attached</small>
                 </div>
+                <ReelIndicator activeIndex={activeServiceIndex} itemCount={services.length} itemLabel="service" sectionName={activeService.title} onPrevious={() => stepService(-1)} onNext={() => stepService(1)} />
               </article>
-            ) : null}
+            </div>
 
-            {activeSectionIndex === 4 ? (
+            <div className={`screen-section screen-section-method${activeSectionIndex === 4 ? " is-active" : ""}`} data-method-index={activeItemIndex} aria-hidden={activeSectionIndex !== 4}>
               <article className="projected-panel projected-method">
                 <header className="projected-method-copy">
                   <span className="credits-rise-item">05 / AI-native Production</span>
                   <h2 className="credits-rise-item">Method.<br /><em>Made visible.</em></h2>
+                  <div className="projected-method-frame" aria-hidden="true"><span>{activeMethod.number}</span><i /><i /><i /></div>
+                  <div className="projected-method-detail credits-rise-item"><small>{activeMethod.number} / {activeMethod.detail}</small><strong>{activeMethod.title}</strong><p>{activeMethod.copy}</p></div>
                   <div className="projected-method-navigation credits-rise-item" aria-label="Browse method steps">
                     <button type="button" onClick={() => stepActiveItem(-1)} aria-label="Previous method step">←</button>
                     <button type="button" onClick={() => stepActiveItem(1)} aria-label="Next method step">→</button>
@@ -393,14 +483,14 @@ export default function CinemaPortfolio() {
                       onClick={() => selectActiveItem(index)}
                       aria-current={activeItemIndex === index ? "step" : undefined}
                     >
-                      <span>{step.number}</span><small>{step.detail}</small><strong>{step.title}</strong><p>{step.copy}</p>
+                      <span>{step.number}</span><small>{step.detail}</small><strong>{step.title}</strong>
                     </button>
                   ))}
                 </div>
               </article>
-            ) : null}
+            </div>
 
-            {activeSectionIndex === 5 ? (
+            <div className={`screen-section screen-section-contact${activeSectionIndex === 5 ? " is-active" : ""}`} aria-hidden={activeSectionIndex !== 5}>
               <article className="projected-panel projected-contact">
                 <div className="projected-contact-copy"><span className="credits-rise-item">06 / Private Screening</span><h2 className="credits-rise-item">Bring the story.<br /><em>Build the world.</em></h2><p className="credits-rise-item">For narrative films, campaigns, music and visual worlds that need direction—not just generation.</p><a className="credits-rise-item" href="mailto:artiste.sanasheikh@gmail.com">artiste.sanasheikh@gmail.com</a></div>
                 {sent ? <div className="screen-confirmation credits-rise-item" role="status"><strong>Project draft prepared.</strong><p>Your email application has the brief ready to review and send.</p></div> : <form
@@ -428,7 +518,7 @@ export default function CinemaPortfolio() {
                 ><label className="credits-rise-item">Name<input name="name" autoComplete="name" required /></label><label className="credits-rise-item">Email<input name="email" type="email" autoComplete="email" required /></label><label className="credits-rise-item">What should the audience feel?<textarea name="brief" rows={3} required /></label><button className="credits-rise-item" type="submit">Prepare enquiry <span aria-hidden="true">↗</span></button></form>}
                 <footer className="credits-rise-item"><a href="https://www.instagram.com/ivysana03?igsh=aXJyZGYyYWIzaGI=" target="_blank" rel="noreferrer">Instagram ↗</a><a href="https://www.linkedin.com/in/sana-sheikh-7a1b15345" target="_blank" rel="noreferrer">LinkedIn ↗</a><a href="https://x.com/ivysana03" target="_blank" rel="noreferrer">X ↗</a></footer>
               </article>
-            ) : null}
+            </div>
           </div>
 
           <CinemaSoundscape
@@ -439,8 +529,7 @@ export default function CinemaPortfolio() {
             showControl={false}
           />
 
-          {closingCreditsOpen ? (
-            <div className="closing-credits" role="status" aria-label="Closing credits">
+          <div className={`closing-credits${closingCreditsOpen && activeSectionIndex === finalSectionIndex ? " is-active" : ""}`} role="status" aria-label="Closing credits" aria-hidden={!closingCreditsOpen || activeSectionIndex !== finalSectionIndex}>
               <div className="closing-credits-window credits-rise-viewport">
                 <div className="closing-credits-roll credits-rise-roll">
                   <small>End credits</small>
@@ -460,8 +549,7 @@ export default function CinemaPortfolio() {
                   <em>Start a film · Scroll up to return</em>
                 </div>
               </div>
-            </div>
-          ) : null}
+          </div>
           </div>
         </div>
 
