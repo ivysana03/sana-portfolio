@@ -443,19 +443,25 @@ export default function CinemaPortfolio() {
             <div className={`screen-section screen-section-services${activeSectionIndex === 3 ? " is-active" : ""}`} data-service-index={activeServiceIndex} aria-hidden={activeSectionIndex !== 3}>
               <article className="projected-panel projected-services-single">
                 <div className="projected-service-scene" key={activeService.number}>
-                  <div className={`projected-service-frame projected-service-artwork motif-${activeService.artwork.motif}`} role="img" aria-label={activeService.artwork.label}><div className="projected-service-abstract"><i /><i /><i /><i /></div></div>
-                  <header>
-                    <span>04 / Commission a Film · {activeService.number} / 04</span>
-                    <h2>{activeService.title}</h2>
-                    <p>{activeService.cardTagline}</p>
-                    <p className="projected-service-note-line">{activeService.screenNote}</p>
-                  </header>
-                  <dl className="projected-service-credits">
-                    <div><dt>Type</dt><dd>{activeService.screenType}</dd></div>
-                    <div><dt>Runtime</dt><dd>{activeService.screenRuntime}</dd></div>
-                    <div><dt>Direction</dt><dd>{activeService.screenDiscipline}</dd></div>
-                  </dl>
-                  <small className="projected-service-note">Editorial service study · No representative film attached</small>
+                  <div className="projected-service-card-inner">
+                    <div className="projected-service-copy">
+                      <header>
+                        <span>04 / Commission a Film · {activeService.number} / 04</span>
+                        <h2>{activeService.title}</h2>
+                        <p>{activeService.cardTagline}</p>
+                        <p className="projected-service-note-line">{activeService.screenNote}</p>
+                      </header>
+                      <dl className="projected-service-credits">
+                        <div><dt>Type</dt><dd>{activeService.screenType}</dd></div>
+                        <div><dt>Runtime</dt><dd>{activeService.screenRuntime}</dd></div>
+                        <div><dt>Direction</dt><dd>{activeService.screenDiscipline}</dd></div>
+                      </dl>
+                      <small className="projected-service-note">Editorial service study · No representative film attached</small>
+                    </div>
+                    <div className={`projected-service-frame projected-service-artwork motif-${activeService.artwork.motif}`} role="img" aria-label={activeService.artwork.label}>
+                      <div className="projected-service-abstract"><i /><i /><i /><i /></div>
+                    </div>
+                  </div>
                 </div>
                 <ReelIndicator activeIndex={activeServiceIndex} itemCount={services.length} itemLabel="service" sectionName={activeService.title} onPrevious={() => stepService(-1)} onNext={() => stepService(1)} />
               </article>
