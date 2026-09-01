@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { films } from "@/lib/portfolio";
+import { filmDetails } from "@/lib/portfolio";
 
 type FilmPageProps = {
   params: Promise<{ slug: string }>;
 };
 
 export function generateStaticParams() {
-  return films.map((film) => ({ slug: film.slug }));
+  return filmDetails.map((film) => ({ slug: film.slug }));
 }
 
 export async function generateMetadata({ params }: FilmPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const film = films.find((item) => item.slug === slug);
+  const film = filmDetails.find((item) => item.slug === slug);
 
   if (!film) return {};
 
@@ -30,12 +30,12 @@ export async function generateMetadata({ params }: FilmPageProps): Promise<Metad
 
 export default async function FilmPage({ params }: FilmPageProps) {
   const { slug } = await params;
-  const filmIndex = films.findIndex((item) => item.slug === slug);
+  const filmIndex = filmDetails.findIndex((item) => item.slug === slug);
 
   if (filmIndex < 0) notFound();
 
-  const film = films[filmIndex];
-  const nextFilm = films[(filmIndex + 1) % films.length];
+  const film = filmDetails[filmIndex];
+  const nextFilm = filmDetails[(filmIndex + 1) % filmDetails.length];
 
   return (
     <main className="film-page">
@@ -61,11 +61,11 @@ export default async function FilmPage({ params }: FilmPageProps) {
           <video src={film.src} poster={film.poster} controls playsInline preload="metadata" aria-label={`${film.title} film`} />
         </div>
 
-        <div className="film-page-notes">
+        {film.hasEditorialNotes ? <div className="film-page-notes">
           <section><span>01 / Story</span><h2>The intention</h2><p>{film.story}</p></section>
           <section><span>02 / Direction</span><h2>The visual language</h2><p>{film.direction}</p></section>
           <section><span>03 / Finish</span><h2>The final rhythm</h2><p>{film.finish}</p></section>
-        </div>
+        </div> : null}
       </article>
 
       <footer className="film-page-next">

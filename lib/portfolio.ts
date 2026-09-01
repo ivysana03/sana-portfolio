@@ -155,24 +155,50 @@ type WorkMedia =
   | { kind: "image"; src: string; alt: string; thumbnailSrc?: string }
   | { kind: "video"; src: string; poster: string; alt: string; thumbnailSrc?: string };
 
-type SelectedCredit = {
+export type SelectedCredit = {
+  slug: string;
   title: string;
   role: string;
   year: string;
+  duration: string;
   media: WorkMedia | null;
 };
 
 export const selectedCredits: SelectedCredit[] = [
-  { title: "Nightborne", role: "Director", year: "2024", media: { kind: "video", src: "/work/nightborne.mp4", poster: "/work/posters/nightborne.jpg", alt: "Nightborne film" } },
-  { title: "Animation Art", role: "Director", year: "2024", media: { kind: "video", src: "/work/animation-art.mp4", poster: "/work/posters/animation-art.jpg", alt: "Animation Art film" } },
-  { title: "A.Suivre", role: "Director", year: "2024", media: { kind: "video", src: "/work/a-suivre.mp4", poster: "/work/posters/a-suivre.jpg", alt: "A.Suivre film" } },
-  { title: "Misty Realm", role: "Director", year: "2024", media: { kind: "video", src: "/work/misty-realm.mp4", poster: "/work/posters/misty-realm.jpg", alt: "Misty Realm film" } },
-  { title: "With Love", role: "Director", year: "2024", media: { kind: "video", src: "/work/with-love.mp4", poster: "/work/posters/with-love.jpg", alt: "With Love film" } },
-  { title: "Beyond the Glass", role: "Director", year: "2024", media: { kind: "video", src: "/work/beyond-the-glass.mp4", poster: "/work/posters/beyond-the-glass.jpg", alt: "Beyond the Glass film" } },
-  { title: "The Elegance", role: "Director", year: "2024", media: { kind: "video", src: "/work/the-elegance.mp4", poster: "/work/posters/the-elegance.jpg", alt: "The Elegance film" } },
-  { title: "Human and Nature", role: "Director", year: "2024", media: { kind: "video", src: "/work/human-and-nature.mp4", poster: "/work/posters/human-and-nature.jpg", alt: "Human and Nature film" } },
-  { title: "Melting Clock", role: "Director", year: "2024", media: { kind: "video", src: "/work/melting-clock.mp4", poster: "/work/posters/melting-clock.jpg", alt: "Melting Clock film" } },
-  { title: "Caneza", role: "Director", year: "2024", media: { kind: "video", src: "/work/caneza.mp4", poster: "/work/posters/caneza.jpg", alt: "Caneza film" } },
-  { title: "Kaizen", role: "Director", year: "2024", media: { kind: "video", src: "/work/kaizen.mp4", poster: "/work/posters/kaizen.jpg", alt: "Kaizen film" } },
-  { title: "Swiss Beauty", role: "Director", year: "2024", media: { kind: "video", src: "/work/swiss-beauty.mp4", poster: "/work/posters/swiss-beauty.jpg", alt: "Swiss Beauty film" } },
+  { slug: "nightborne", title: "Nightborne", role: "Director", year: "2024", duration: "12:11", media: { kind: "video", src: "/work/nightborne.mp4", poster: "/work/posters/nightborne.jpg", alt: "Nightborne film" } },
+  { slug: "animation-art", title: "Animation Art", role: "Director", year: "2024", duration: "00:16", media: { kind: "video", src: "/work/animation-art.mp4", poster: "/work/posters/animation-art.jpg", alt: "Animation Art film" } },
+  { slug: "a-suivre", title: "A.Suivre", role: "Director", year: "2024", duration: "01:11", media: { kind: "video", src: "/work/a-suivre.mp4", poster: "/work/posters/a-suivre.jpg", alt: "A.Suivre film" } },
+  { slug: "misty-realm", title: "Misty Realm", role: "Director", year: "2024", duration: "00:46", media: { kind: "video", src: "/work/misty-realm.mp4", poster: "/work/posters/misty-realm.jpg", alt: "Misty Realm film" } },
+  { slug: "with-love", title: "With Love", role: "Director", year: "2024", duration: "00:57", media: { kind: "video", src: "/work/with-love.mp4", poster: "/work/posters/with-love.jpg", alt: "With Love film" } },
+  { slug: "beyond-the-glass", title: "Beyond the Glass", role: "Director", year: "2024", duration: "00:46", media: { kind: "video", src: "/work/beyond-the-glass.mp4", poster: "/work/posters/beyond-the-glass.jpg", alt: "Beyond the Glass film" } },
+  { slug: "the-elegance", title: "The Elegance", role: "Director", year: "2024", duration: "00:45", media: { kind: "video", src: "/work/the-elegance.mp4", poster: "/work/posters/the-elegance.jpg", alt: "The Elegance film" } },
+  { slug: "human-and-nature", title: "Human and Nature", role: "Director", year: "2024", duration: "00:10", media: { kind: "video", src: "/work/human-and-nature.mp4", poster: "/work/posters/human-and-nature.jpg", alt: "Human and Nature film" } },
+  { slug: "melting-clock", title: "Melting Clock", role: "Director", year: "2024", duration: "00:25", media: { kind: "video", src: "/work/melting-clock.mp4", poster: "/work/posters/melting-clock.jpg", alt: "Melting Clock film" } },
+  { slug: "caneza", title: "Caneza", role: "Director", year: "2024", duration: "00:30", media: { kind: "video", src: "/work/caneza.mp4", poster: "/work/posters/caneza.jpg", alt: "Caneza film" } },
+  { slug: "kaizen", title: "Kaizen", role: "Director", year: "2024", duration: "00:15", media: { kind: "video", src: "/work/kaizen.mp4", poster: "/work/posters/kaizen.jpg", alt: "Kaizen film" } },
+  { slug: "swiss-beauty", title: "Swiss Beauty", role: "Director", year: "2024", duration: "00:38", media: { kind: "video", src: "/work/swiss-beauty.mp4", poster: "/work/posters/swiss-beauty.jpg", alt: "Swiss Beauty film" } },
 ];
+
+export type FilmDetail = PortfolioFilm & { hasEditorialNotes: boolean };
+
+export const filmDetails: FilmDetail[] = selectedCredits.map((credit) => {
+  const editorialFilm = films.find((film) => film.slug === credit.slug);
+  if (editorialFilm) return { ...editorialFilm, hasEditorialNotes: true };
+
+  const media = credit.media?.kind === "video" ? credit.media : null;
+  return {
+    slug: credit.slug,
+    title: credit.title,
+    src: media?.src ?? "",
+    poster: media?.poster ?? "",
+    format: "Selected work",
+    duration: credit.duration,
+    note: "A selected film from Sana Sheikh’s directed portfolio.",
+    classification: "Selected work",
+    role: credit.role,
+    story: "",
+    direction: "",
+    finish: "",
+    hasEditorialNotes: false,
+  };
+});

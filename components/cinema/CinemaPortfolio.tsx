@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import Lenis from "lenis";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -110,6 +111,7 @@ export default function CinemaPortfolio() {
   const [closingCreditsOpen, setClosingCreditsOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [sent, setSent] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const theatreRef = useRef<HTMLElement>(null);
   const itemListRef = useRef<HTMLElement>(null);
   const activeSectionRef = useRef(0);
@@ -146,6 +148,7 @@ export default function CinemaPortfolio() {
 
   const selectSection = useCallback((index: number) => {
     const nextIndex = Math.max(0, Math.min(finalSectionIndex, index));
+    setMobileNavOpen(false);
     // Hide the end-credits overlay immediately when a nav click leaves the
     // final chapter; the scroll animation will then reveal the destination
     // section without credits lingering over it.
@@ -313,7 +316,7 @@ export default function CinemaPortfolio() {
 
       <header className="site-header">
         <button className="site-mark" data-section-index="0" type="button" onClick={() => selectSection(0)} aria-label="Sana Sheikh, return to films"><span>SS</span><small>AI Film Director</small></button>
-        <nav aria-label="Projected chapters">
+        <nav className="desktop-chapter-nav" aria-label="Projected chapters">
           {chapters.slice(0, navigableSectionCount).map((name, index) => (
             <button
               className={activeSectionIndex === index && !closingCreditsOpen ? "is-active" : ""}
@@ -328,6 +331,15 @@ export default function CinemaPortfolio() {
           ))}
         </nav>
         <button
+          className="mobile-chapter-toggle"
+          type="button"
+          aria-expanded={mobileNavOpen}
+          aria-controls="mobile-chapter-nav"
+          onClick={() => setMobileNavOpen((open) => !open)}
+        >
+          Sections <span aria-hidden="true">{mobileNavOpen ? "−" : "+"}</span>
+        </button>
+        <button
           className={`header-contact${activeSectionIndex === finalSectionIndex ? " is-active" : ""}`}
           data-section-index={finalSectionIndex}
           type="button"
@@ -336,6 +348,25 @@ export default function CinemaPortfolio() {
         >
           {closingCreditsOpen ? "Credits" : "Start a Film"} <span aria-hidden="true">↗</span>
         </button>
+        <nav
+          className={`mobile-chapter-nav${mobileNavOpen ? " is-open" : ""}`}
+          id="mobile-chapter-nav"
+          aria-label="Mobile projected chapters"
+          aria-hidden={!mobileNavOpen}
+        >
+          {chapters.map((name, index) => (
+            <button
+              className={activeSectionIndex === index && !closingCreditsOpen ? "is-active" : ""}
+              type="button"
+              key={name}
+              onClick={() => selectSection(index)}
+              tabIndex={mobileNavOpen ? 0 : -1}
+              aria-current={activeSectionIndex === index && !closingCreditsOpen ? "page" : undefined}
+            >
+              <span>{String(index + 1).padStart(2, "0")}</span>{name}
+            </button>
+          ))}
+        </nav>
       </header>
 
       <section
@@ -414,7 +445,10 @@ export default function CinemaPortfolio() {
                   )}
                   <div className="projected-work-caption" aria-live="polite">
                     <p className="projected-work-caption-label credits-rise-item">A developing body of directed work.</p>
-                    <p className="projected-work-caption-current credits-rise-item">Now viewing · {String(activeItemIndex + 1).padStart(2, "0")} — {activeWork.title}</p>
+                    <div className="projected-work-caption-line credits-rise-item">
+                      <p className="projected-work-caption-current">Now viewing · {String(activeItemIndex + 1).padStart(2, "0")} — {activeWork.title}</p>
+                      <Link href={`/films/${activeWork.slug}`}>Project notes ↗</Link>
+                    </div>
                   </div>
                 </div>
                 <CursorPreview items={selectedCredits.map((credit, index) => ({ id: credit.title, label: credit.title, accent: workVisualTreatments[index % workVisualTreatments.length].accent, image: credit.media?.kind === "video" ? credit.media.poster : credit.media?.src }))}>
