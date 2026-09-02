@@ -5,15 +5,14 @@ import Link from "next/link";
 import Lenis from "lenis";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { films, selectedCredits, services } from "@/lib/portfolio";
+import { films, selectedCredits } from "@/lib/portfolio";
 import directorPortrait from "@/src/assets/image/sana.jpeg";
 import CinemaSoundscape from "./CinemaSoundscape";
 import CursorPreview from "./CursorPreview";
 import HeroProjection from "./HeroProjection";
-import ReelIndicator from "./ReelIndicator";
 
-const chapters = ["Films", "Director", "Work", "Services", "Method", "Contact"] as const;
-const navigableSectionCount = 5;
+const chapters = ["Films", "Director", "Work", "Method", "Contact"] as const;
+const navigableSectionCount = 4;
 const finalSectionIndex = chapters.length - 1;
 const sectionBoundaryHysteresis = 0.55;
 // Keep the end-credits overlay away from the Contact/Method boundary. A wide
@@ -36,7 +35,6 @@ const theatreCameraStops: readonly TheatrePose[] = [
   { hallShift: 0, hallScale: 1.025, seatShift: 0, seatScale: 1, aisleScale: 1, beamScale: 1, vignetteOpacity: 0.82 },
   { hallShift: -2.7, hallScale: 1.14, seatShift: 3.2, seatScale: 1.1, aisleScale: 1.075, beamScale: 1.035, vignetteOpacity: 0.91 },
   { hallShift: -0.9, hallScale: 1.07, seatShift: 1.15, seatScale: 1.038, aisleScale: 1.025, beamScale: 1.012, vignetteOpacity: 0.86 },
-  { hallShift: -1.2, hallScale: 1.085, seatShift: 1.55, seatScale: 1.05, aisleScale: 1.035, beamScale: 1.017, vignetteOpacity: 0.88 },
   { hallShift: -1.45, hallScale: 1.095, seatShift: 1.9, seatScale: 1.06, aisleScale: 1.044, beamScale: 1.02, vignetteOpacity: 0.9 },
   { hallShift: 0.25, hallScale: 1.045, seatShift: 0.7, seatScale: 1.02, aisleScale: 1.012, beamScale: 0.985, vignetteOpacity: 0.98 },
 ];
@@ -47,7 +45,7 @@ const processSteps = [
   { number: "03", title: "Shot Production", detail: "Generate · Select · Rebuild", copy: "Build shots for continuity rather than treating them as isolated prompts.", artwork: { motif: "shots", label: "Shot production grid" } },
   { number: "04", title: "Edit & Finish", detail: "Rhythm · Sound · Grade", copy: "Shape picture, sound and colour into the final emotional rhythm.", artwork: { motif: "edit", label: "Edit and finish timeline" } },
 ];
-const itemCounts = [films.length, 1, selectedCredits.length, services.length, processSteps.length, 1];
+const itemCounts = [films.length, 1, selectedCredits.length, processSteps.length, 1];
 const workVisualTreatments = [
   { accent: "#d58b56", shadow: "#24100c", angle: "132deg" },
   { accent: "#8da9b8", shadow: "#0b1a22", angle: "38deg" },
@@ -107,16 +105,14 @@ function resolveStableSection(roomPosition: number, currentSection: number) {
 export default function CinemaPortfolio() {
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
   const [activeItemIndex, setActiveItemIndex] = useState(0);
-  const [activeServiceIndex, setActiveServiceIndex] = useState(0);
   const [closingCreditsOpen, setClosingCreditsOpen] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   const [sent, setSent] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const theatreRef = useRef<HTMLElement>(null);
   const itemListRef = useRef<HTMLElement>(null);
   const activeSectionRef = useRef(0);
   const activeItemRef = useRef(0);
-  const activeServiceRef = useRef(0);
   const closingCreditsRef = useRef(false);
   const lenisRef = useRef<Lenis | null>(null);
   const cameraProgressRef = useRef(0);
@@ -131,11 +127,6 @@ export default function CinemaPortfolio() {
     if (!sectionChanged && !showCredits) return;
     activeItemRef.current = 0;
     setActiveItemIndex(0);
-    if (nextIndex === 3) {
-      activeServiceRef.current = 0;
-      setActiveServiceIndex(0);
-    }
-
     const focusedControl = document.activeElement;
     if (
       focusedControl instanceof HTMLElement
@@ -182,26 +173,12 @@ export default function CinemaPortfolio() {
     });
   }, []);
 
-  const selectService = useCallback((nextIndex: number) => {
-    const safeIndex = Math.max(0, Math.min(services.length - 1, nextIndex));
-    activeServiceRef.current = safeIndex;
-    setActiveServiceIndex(safeIndex);
-  }, []);
-
-  const stepService = useCallback((direction: number) => {
-    selectService((activeServiceRef.current + direction + services.length) % services.length);
-  }, [selectService]);
-
   const stepActiveItem = useCallback((direction: number) => {
-    if (activeSectionRef.current === 3) {
-      stepService(direction);
-      return;
-    }
     const count = itemCounts[activeSectionRef.current] ?? 1;
     if (count <= 1) return;
     const nextIndex = (activeItemRef.current + direction + count) % count;
     selectActiveItem(nextIndex);
-  }, [selectActiveItem, stepService]);
+  }, [selectActiveItem]);
 
   useLayoutEffect(() => {
     const theatre = theatreRef.current;
@@ -296,7 +273,6 @@ export default function CinemaPortfolio() {
   }
 
   const activeWork = selectedCredits[activeItemIndex] ?? selectedCredits[0];
-  const activeService = services[activeServiceIndex] ?? services[0];
   const activeMethod = processSteps[activeItemIndex] ?? processSteps[0];
   const setItemListElement = useCallback((node: HTMLElement | null) => {
     itemListRef.current = node;
@@ -475,36 +451,10 @@ export default function CinemaPortfolio() {
               </article>
             </div>
 
-            <div className={`screen-section screen-section-services${activeSectionIndex === 3 ? " is-active" : ""}`} data-service-index={activeServiceIndex} aria-hidden={activeSectionIndex !== 3}>
-              <article className="projected-panel projected-services-single">
-                <div className="projected-service-scene" key={activeService.number}>
-                  <div className="projected-service-card-inner">
-                    <div className="projected-service-copy">
-                      <header>
-                        <span>04 / Commission a Film · {activeService.number} / 04</span>
-                        <h2>{activeService.title}</h2>
-                        <p>{activeService.cardTagline}</p>
-                        <p className="projected-service-note-line">{activeService.screenNote}</p>
-                      </header>
-                      <dl className="projected-service-credits">
-                        <div><dt>Type</dt><dd>{activeService.screenType}</dd></div>
-                        <div><dt>Runtime</dt><dd>{activeService.screenRuntime}</dd></div>
-                        <div><dt>Direction</dt><dd>{activeService.screenDiscipline}</dd></div>
-                      </dl>
-                    </div>
-                    <div className={`projected-service-frame projected-service-artwork motif-${activeService.artwork.motif}`} role="img" aria-label={activeService.artwork.label}>
-                      <div className="projected-service-abstract"><i /><i /><i /><i /></div>
-                    </div>
-                  </div>
-                </div>
-                <ReelIndicator activeIndex={activeServiceIndex} itemCount={services.length} itemLabel="service" sectionName={activeService.title} onPrevious={() => stepService(-1)} onNext={() => stepService(1)} />
-              </article>
-            </div>
-
-            <div className={`screen-section screen-section-method${activeSectionIndex === 4 ? " is-active" : ""}`} data-method-index={activeItemIndex} aria-hidden={activeSectionIndex !== 4}>
+            <div className={`screen-section screen-section-method${activeSectionIndex === 3 ? " is-active" : ""}`} data-method-index={activeItemIndex} aria-hidden={activeSectionIndex !== 3}>
               <article className="projected-panel projected-method">
                 <header className="projected-method-copy">
-                  <span className="credits-rise-item">05 / AI-native Production</span>
+                  <span className="credits-rise-item">04 / AI-native Production</span>
                   <h2 className="credits-rise-item">Method.<br /><em>Made visible.</em></h2>
                   <div className={`projected-method-frame method-artwork motif-${activeMethod.artwork.motif}`} role="img" aria-label={activeMethod.artwork.label}><span>{activeMethod.number}</span><i /><i /><i /></div>
                   <div className="projected-method-detail credits-rise-item"><small>{activeMethod.number} / {activeMethod.detail}</small><strong>{activeMethod.title}</strong><p>{activeMethod.copy}</p></div>
@@ -530,9 +480,9 @@ export default function CinemaPortfolio() {
               </article>
             </div>
 
-            <div className={`screen-section screen-section-contact${activeSectionIndex === 5 ? " is-active" : ""}`} aria-hidden={activeSectionIndex !== 5}>
+            <div className={`screen-section screen-section-contact${activeSectionIndex === 4 ? " is-active" : ""}`} aria-hidden={activeSectionIndex !== 4}>
               <article className="projected-panel projected-contact">
-                <div className="projected-contact-copy"><span className="credits-rise-item">06 / Private Screening</span><h2 className="credits-rise-item">Bring the story.<br /><em>Build the world.</em></h2><p className="credits-rise-item">For narrative films, campaigns, music and visual worlds that need direction—not just generation.</p><a className="credits-rise-item" href="mailto:artiste.sanasheikh@gmail.com">artiste.sanasheikh@gmail.com</a></div>
+                <div className="projected-contact-copy"><span className="credits-rise-item">05 / Private Screening</span><h2 className="credits-rise-item">Bring the story.<br /><em>Build the world.</em></h2><p className="credits-rise-item">For narrative films, campaigns, music and visual worlds that need direction—not just generation.</p><a className="credits-rise-item" href="mailto:artiste.sanasheikh@gmail.com">artiste.sanasheikh@gmail.com</a></div>
                 {sent ? <div className="screen-confirmation credits-rise-item" role="status"><strong>Project draft prepared.</strong><p>Your email application has the brief ready to review and send.</p></div> : <form
                   className="screen-contact-form"
                   onSubmit={prepareEnquiry}
@@ -594,7 +544,7 @@ export default function CinemaPortfolio() {
         </div>
 
         <div className="theatre-atmosphere" aria-hidden="true" />
-        <div className="projection-readout" aria-hidden="true"><span>Sana Sheikh · AI Film Director</span><span>House 01 / {chapters[activeSectionIndex]}</span></div>
+        <div className="projection-readout is-section-only" aria-hidden="true"><span>House 01 / {chapters[activeSectionIndex]}</span></div>
         <p className="theatre-instruction">Scroll sections · Arrows browse items</p>
       </section>
     </main>

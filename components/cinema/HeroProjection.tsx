@@ -95,6 +95,31 @@ export default function HeroProjection({ activeIndex, films, onStepItem, soundEn
 
       <div className="hero-film-vignette" aria-hidden="true" />
 
+      <button
+        className="hero-film-arrow is-previous"
+        type="button"
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onStepItem(-1);
+        }}
+        aria-label="Previous film"
+      >
+        <span aria-hidden="true">‹</span>
+      </button>
+      <button
+        className="hero-film-arrow is-next"
+        type="button"
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onStepItem(1);
+        }}
+        aria-label="Next film"
+      >
+        <span aria-hidden="true">›</span>
+      </button>
+
       <div className="hero-film-controls" aria-live="polite">
         <div className="hero-film-caption credits-rise-item">
           <span>Now playing — <strong>{activeFilm?.title ?? "Preparing projection"}</strong></span>
@@ -112,10 +137,6 @@ export default function HeroProjection({ activeIndex, films, onStepItem, soundEn
               <path d="M4 9v6h4l5 4V5L8 9H4Z" />
               {soundEnabled ? <path d="M16 8.5c1.5 1.8 1.5 5.2 0 7M18.5 6c3 3.3 3 8.7 0 12" /> : <path d="m17 9 5 6m0-6-5 6" />}
             </svg>
-            <span>{soundEnabled ? "Sound on" : "Sound off"}</span>
-          </button>
-          <button className="hero-film-explore" type="button" onClick={() => onStepItem(1)} aria-label="Explore next film">
-            Explore films <span aria-hidden="true">→</span>
           </button>
         </div>
       </div>
